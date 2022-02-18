@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from store.user_methods import users_get, user_add, user_delete, get_user
+from store.user_methods import users_get, user_add, user_delete, get_user, user_update
 from store.db_model import User
 from store.auth_methods import authenticate_user
 

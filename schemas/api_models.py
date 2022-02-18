@@ -10,11 +10,26 @@ class UserModel(BaseModel):
     surname: Optional[str]
     password: Optional[str]
 
+    class Config:
+        orm_mode = True
+
+
+class UserUpdate(UserModel):
+
+    class Config:
+        orm_mode = True
+
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+    class Config:
+        orm_mode = True
+
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+    class Config:
+        orm_mode = True

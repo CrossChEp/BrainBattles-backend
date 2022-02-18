@@ -2,6 +2,7 @@ import bcrypt
 from sqlalchemy.orm import Session
 
 from schemas import UserModel
+from schemas.api_models import UserUpdate
 from store.db_model import User
 
 
@@ -40,11 +41,22 @@ def get_user(user: UserModel, session: Session):
             pass
         else:
             new_user[key] = value
+
     user = session.query(User).filter_by(**new_user).first()
-    return UserModel(
-        nickname=user.nickname,
-        email=user.email,
-        name=user.name,
-        surname=user.surname,
-        password=user.password
-    )
+    return user
+
+
+def user_update(user: UserModel, update_data: UserUpdate, session: Session):
+    new_user = {}
+    real_user = session.query(User).filter_by(**user.dict()).first()
+    for key, value in update_data.dict().items():
+        if value is None:
+            pass
+        if key == 'password':
+            value = bcrypt.hashpw(
+                value.encode(),
+                bcrypt.gensalt()
+            )
+        new_user[key] = value
+        real_user.update(new_user)
+        session.commit()
