@@ -1,1 +1,1 @@
-from schemas.api_models import UserModel
+from schemas.api_models import UserModel, Token, TokenData
