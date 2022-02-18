@@ -34,5 +34,17 @@ def user_delete(id: int, session: Session):
 
 
 def get_user(user: UserModel, session: Session):
-    user = session.query(User).filter_by(**user.dict()).first()
-    return user
+    new_user = {}
+    for key, value in user.dict().items():
+        if value is None:
+            pass
+        else:
+            new_user[key] = value
+    user = session.query(User).filter_by(**new_user).first()
+    return UserModel(
+        nickname=user.nickname,
+        email=user.email,
+        name=user.name,
+        surname=user.surname,
+        password=user.password
+    )

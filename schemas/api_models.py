@@ -4,11 +4,11 @@ from pydantic import BaseModel
 
 
 class UserModel(BaseModel):
-    nickname: str
-    email: str
-    name: str
-    surname: str
-    password: str
+    nickname: Optional[str]
+    email: Optional[str]
+    name: Optional[str]
+    surname: Optional[str]
+    password: Optional[str]
 
 
 class Token(BaseModel):
