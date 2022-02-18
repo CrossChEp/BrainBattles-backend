@@ -1,4 +1,5 @@
 import bcrypt
+from fastapi import Query
 from sqlalchemy.orm import Session
 
 from schemas import UserModel
@@ -46,9 +47,9 @@ def get_user(user: UserModel, session: Session):
     return user
 
 
-def user_update(user: UserModel, update_data: UserUpdate, session: Session):
+def user_update(user: User, update_data: UserUpdate, session: Session):
+    req: Query = session.query(User).filter_by(id=user.id)
     new_user = {}
-    real_user = session.query(User).filter_by(**user.dict()).first()
     for key, value in update_data.dict().items():
         if value is None:
             pass
@@ -58,5 +59,5 @@ def user_update(user: UserModel, update_data: UserUpdate, session: Session):
                 bcrypt.gensalt()
             )
         new_user[key] = value
-        real_user.update(new_user)
-        session.commit()
+    req.update(new_user)
+    session.commit()
