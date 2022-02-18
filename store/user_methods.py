@@ -23,3 +23,9 @@ def user_add(user: UserModel, session: Session):
 
     session.add(new_user)
     session.commit()
+
+
+def user_delete(id: int, session: Session):
+    user = session.query(User).filter_by(id=id).first()
+    session.delete(user)
+    session.commit()
