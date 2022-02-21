@@ -1,6 +1,5 @@
-
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
 
 base = declarative_base()
 
@@ -13,3 +12,14 @@ class User(base):
     name = Column(String)
     surname = Column(String)
     password = Column(String)
+    tasks = relationship('Task', backref='user')
+
+
+class Task(base):
+    __tablename__ = 'tasks'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    subject = Column(String)
+    content = Column(String)
+    right_answer = Column(String)
+    author = Column(Integer, ForeignKey('users.id'))
