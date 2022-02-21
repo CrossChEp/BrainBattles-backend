@@ -19,3 +19,8 @@ def task_add(task: TaskModel, user: User, session: Session):
 
 def tasks_get(session: Session):
     return session.query(Task).all()
+
+
+def task_get(task_id: int, session: Session):
+    task = session.query(Task).filter_by(id=task_id).first()
+    return task
