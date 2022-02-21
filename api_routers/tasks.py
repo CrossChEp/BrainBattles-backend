@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
 from schemas import TaskModel
-from store import get_session, task_add, User
+from store import get_session, User
+from models import task_add
 
 tasks_router = APIRouter()
 

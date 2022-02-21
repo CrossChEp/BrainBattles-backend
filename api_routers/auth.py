@@ -10,8 +10,9 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 
 from configs import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from schemas import Token, UserModel, TokenData
-from store import get_session, authenticate_user, get_user, User
-from store.auth_methods import create_access_token
+from models import authenticate_user, get_user
+from store import get_session, User
+from models.auth_methods import create_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

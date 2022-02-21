@@ -11,7 +11,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 import store
 from configs import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from schemas import TokenData, UserModel
-from store import get_user, get_user
+from models.user_methods import get_user
 
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')

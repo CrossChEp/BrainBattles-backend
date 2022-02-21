@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from api_routers.auth import get_current_user
 from schemas import UserModel
 from schemas.api_models import UserUpdate
-from store import users_get, get_session, user_add, user_delete, user_update, User
+from models import users_get, user_add, user_delete, user_update
+from store import get_session, User
 
 users_router = APIRouter()
 

@@ -1,10 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from store.user_methods import users_get, user_add, user_delete, get_user, user_update
 from store.db_model import User, Task
-from store.auth_methods import authenticate_user
-from store.tasks_methods import task_add
-
 
 database_protocol = 'sqlite:///store/database.db'
 engine = create_engine(database_protocol)
