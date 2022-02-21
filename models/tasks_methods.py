@@ -33,3 +33,7 @@ def task_delete(task_id: int, user: User, session: Session):
         raise HTTPException(status_code=405)
     session.delete(task)
     session.commit()
+
+
+def user_tasks_get(user: User, session: Session):
+    return user.tasks

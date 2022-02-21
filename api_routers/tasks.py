@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from api_routers.auth import get_current_user
 from schemas import TaskModel
 from store import get_session, User
-from models import task_add, tasks_get, task_get, task_delete
+from models import task_add, tasks_get, task_get, task_delete, user_tasks_get
 
 tasks_router = APIRouter()
 
@@ -28,3 +28,9 @@ def get_task(task_id: int, session: Session = Depends(get_session)):
 def delete_task(task_id: int, user: User = Depends(get_current_user),
                 session: Session = Depends(get_session)):
     return task_delete(task_id=task_id, user=user, session=session)
+
+
+@tasks_router.get('/api/user_tasks')
+def get_user_tasks(user: User = Depends(get_current_user),
+                   session: Session = Depends(get_session)):
+    return user_tasks_get(user=user, session=session)
