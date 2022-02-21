@@ -33,3 +33,13 @@ class TokenData(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TaskModel(BaseModel):
+    task_name: str
+    subject: str
+    content: str
+    right_answer: str
+
+    class Config:
+        orm_mode = True
