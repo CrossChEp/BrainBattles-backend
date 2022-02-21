@@ -14,6 +14,8 @@ class User(base):
     password = Column(String)
     tasks = relationship('Task', backref='user')
     staging = relationship('Staging', backref='user')
+    game = relationship('Game', backref='user', cascade='all, delete, save-update')
+
 
 class Task(base):
     __tablename__ = 'tasks'
@@ -29,3 +31,10 @@ class Staging(base):
     __tablename__ = 'staging'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+
+
+class Game(base):
+    __tablename__ = 'games'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    opponent_id = Column(Integer)
