@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from schemas import TaskModel
@@ -24,3 +25,11 @@ def tasks_get(session: Session):
 def task_get(task_id: int, session: Session):
     task = session.query(Task).filter_by(id=task_id).first()
     return task
+
+
+def task_delete(task_id: int, user: User, session: Session):
+    task = session.query(Task).filter_by(id=task_id).first()
+    if task not in user.tasks:
+        raise HTTPException(status_code=405)
+    session.delete(task)
+    session.commit()
