@@ -15,3 +15,7 @@ def task_add(task: TaskModel, user: User, session: Session):
     user.tasks.append(new_task)
     session.add(new_task)
     session.commit()
+
+
+def tasks_get(session: Session):
+    return session.query(Task).all()
