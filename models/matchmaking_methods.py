@@ -14,3 +14,11 @@ def adding_to_staging(user: User, session: Session):
     session.add(staging)
     user.staging.append(staging)
     session.commit()
+
+
+def delete_from_staging(user: User, session: Session):
+    staging = session.query(Staging).filter_by(user_id=user.id).first()
+    if not staging:
+        raise HTTPException(status_code=403)
+    session.delete(staging)
+    session.commit()
