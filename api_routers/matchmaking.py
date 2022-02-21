@@ -8,13 +8,13 @@ from store import User, get_session
 matchmaking_router = APIRouter()
 
 
-@matchmaking_router.post('/matchmaking')
+@matchmaking_router.post('/api/matchmaking')
 def add_to_staging(user: User = Depends(get_current_user),
                    session: Session = Depends(get_session)):
     return adding_to_staging(user=user, session=session)
 
 
-@matchmaking_router.delete('/matchmaking')
+@matchmaking_router.delete('/api/matchmaking')
 def staging_cancel(user: User = Depends(get_current_user),
                    session: Session = Depends(get_session)):
     return delete_from_staging(user=user, session=session)

@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from store.db_model import User, Task, Staging
+from store.db_model import User, Task, Staging, Game
 
 database_protocol = 'sqlite:///store/database.db'
 engine = create_engine(database_protocol)
