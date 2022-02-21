@@ -13,7 +13,7 @@ class User(base):
     surname = Column(String)
     password = Column(String)
     tasks = relationship('Task', backref='user')
-
+    staging = relationship('Staging', backref='user')
 
 class Task(base):
     __tablename__ = 'tasks'
@@ -23,3 +23,9 @@ class Task(base):
     content = Column(String)
     right_answer = Column(String)
     author = Column(Integer, ForeignKey('users.id'))
+
+
+class Staging(base):
+    __tablename__ = 'staging'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
