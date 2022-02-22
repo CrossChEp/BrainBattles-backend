@@ -35,3 +35,11 @@ def add_to_game(user: User, session: Session):
     session.commit()
     delete_from_staging(user=user, session=session)
     delete_from_staging(user=opponent, session=session)
+
+
+def leave_game(user: User, session: Session):
+    session_user = session.query(Game).filter_by(user_id=user.id).first()
+    session_user_opponent = session.query(Game).filter_by(opponent_id=user.id).first()
+    session.delete(session_user)
+    session.delete(session_user_opponent)
+    session.commit()
