@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
-from models import add_to_game, leave_game
+from models import add_to_game, leave_game, make_try
 from store import User, get_session
 
 game_router = APIRouter()
@@ -18,3 +18,13 @@ def game_adding(user: User = Depends(get_current_user),
 def game_leaving(user: User = Depends(get_current_user),
                  session: Session = Depends(get_session)):
     return leave_game(user=user, session=session)
+
+
+@game_router.post('/api/game/try')
+def trying(task_id: int, answer: str,
+           user: User = Depends(get_current_user),
+           session: Session = Depends(get_session)):
+    return make_try(
+        task_id=task_id, answer=answer,
+        user=user, session=session
+    )

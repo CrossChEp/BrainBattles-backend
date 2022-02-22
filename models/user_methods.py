@@ -17,14 +17,8 @@ def user_add(user: UserModel, session: Session):
         user.password.encode(),
         salt=bcrypt.gensalt()
     )
-    new_user = User(
-        nickname=user.nickname,
-        email=user.email,
-        name=user.name,
-        surname=user.surname,
-        password=user.password
-    )
-
+    new_user = User(**user.dict())
+    new_user.scores = 0
     session.add(new_user)
     session.commit()
 

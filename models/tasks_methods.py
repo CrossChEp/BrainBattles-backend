@@ -6,13 +6,7 @@ from store import Task, User
 
 
 def task_add(task: TaskModel, user: User, session: Session):
-    new_task = Task(
-        name=task.task_name,
-        subject=task.subject,
-        content=task.content,
-        right_answer=task.right_answer,
-
-    )
+    new_task = Task(**task.dict())
     user.tasks.append(new_task)
     session.add(new_task)
     session.commit()

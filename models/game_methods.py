@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from models import delete_from_staging
-from store import User, Staging, Game
+from store import User, Staging, Game, Task
 
 
 def add_to_game(user: User, session: Session):
@@ -44,4 +44,13 @@ def leave_game(user: User, session: Session):
         raise HTTPException(status_code=403, detail='User is not in the game')
     session.delete(session_user)
     session.delete(session_user_opponent)
+    session.commit()
+
+
+def make_try(task_id: int, answer: str,
+             user: User, session: Session):
+    task = session.query(Task).filter_by(id=task_id).first()
+    if task.right_answer == answer:
+        leave_game(user=user, session=session)
+        user.scores += task.scores
     session.commit()

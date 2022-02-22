@@ -36,7 +36,7 @@ class TokenData(BaseModel):
 
 
 class TaskModel(BaseModel):
-    task_name: str
+    name: str
     subject: str
     content: str
     right_answer: str
