@@ -16,7 +16,7 @@ def add_to_game(user: User, session: Session):
     opponent_id = None
     while not flag:
         if len(staging_parameters) <= 1:
-            raise HTTPException(status_code=403, detail='You are only one person in lobby, please wait')
+            raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
         random_id = random.randint(1, len(staging_parameters))
         opponent_id = session.query(Staging).filter_by(id=random_id).first()
         if opponent_id.user_id != user.id:
