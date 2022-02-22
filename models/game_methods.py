@@ -11,13 +11,12 @@ def add_to_game(user: User, session: Session):
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     staging_parameters = session.query(Staging).all()
     if not staging:
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=403, detail='You are not in staging')
     flag = False
-    random_id = None
     opponent_id = None
     while not flag:
         if len(staging_parameters) <= 1:
-            raise HTTPException(status_code=403)
+            raise HTTPException(status_code=403, detail='You are only one person in lobby, please wait')
         random_id = random.randint(1, len(staging_parameters))
         opponent_id = session.query(Staging).filter_by(id=random_id).first()
         if opponent_id.user_id != user.id:
@@ -41,6 +40,8 @@ def add_to_game(user: User, session: Session):
 def leave_game(user: User, session: Session):
     session_user = session.query(Game).filter_by(user_id=user.id).first()
     session_user_opponent = session.query(Game).filter_by(opponent_id=user.id).first()
+    if session_user is None or session_user_opponent is None:
+        raise HTTPException(status_code=403, detail='User is not in the game')
     session.delete(session_user)
     session.delete(session_user_opponent)
     session.commit()

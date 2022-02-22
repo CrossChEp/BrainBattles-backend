@@ -30,7 +30,7 @@ def task_get(task_id: int, session: Session):
 def task_delete(task_id: int, user: User, session: Session):
     task = session.query(Task).filter_by(id=task_id).first()
     if task not in user.tasks:
-        raise HTTPException(status_code=403)
+        raise HTTPException(status_code=403, detail="You don't have such a permission")
     session.delete(task)
     session.commit()
 
