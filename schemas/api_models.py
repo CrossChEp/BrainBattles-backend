@@ -40,6 +40,7 @@ class TaskModel(BaseModel):
     subject: str
     content: str
     right_answer: str
+    scores: float
 
     class Config:
         orm_mode = True

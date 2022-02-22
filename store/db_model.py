@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import declarative_base, relationship
 
 base = declarative_base()
@@ -24,6 +24,7 @@ class Task(base):
     subject = Column(String)
     content = Column(String)
     right_answer = Column(String)
+    scores = Column(Float)
     author = Column(Integer, ForeignKey('users.id'))
 
 
