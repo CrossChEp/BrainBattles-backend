@@ -43,6 +43,7 @@ def add_to_game(user: User, session: Session):
     game = session.query(Game).filter_by(user_id=opponent.id, opponent_id=user.id).first()
     task.games.append(game)
     session.commit()
+    return {'task': task.id}
 
 
 def leave_game(user: User, session: Session):
@@ -64,4 +65,5 @@ def make_try(answer: str, user: User, session: Session):
         leave_game(user=user, session=session)
         user.scores += task.scores
         session.commit()
+        return
     raise HTTPException(status_code=400, detail='Wrong answer')
