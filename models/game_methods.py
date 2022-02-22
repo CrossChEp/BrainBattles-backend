@@ -14,13 +14,14 @@ def add_to_game(user: User, session: Session):
         raise HTTPException(status_code=403)
     flag = False
     random_id = None
+    opponent_id = None
     while not flag:
         if len(staging_parameters) <= 1:
             raise HTTPException(status_code=403)
-        random_id = random.randint(0, len(staging_parameters))
-        if random_id != user.id:
+        random_id = random.randint(1, len(staging_parameters))
+        opponent_id = session.query(Staging).filter_by(id=random_id).first()
+        if opponent_id.user_id != user.id:
             flag = True
-    opponent_id = session.query(Staging).filter_by(id=random_id).first()
     opponent = session.query(User).filter_by(id=opponent_id.user_id).first()
     opponent_game = Game(
         opponent_id=opponent.id
