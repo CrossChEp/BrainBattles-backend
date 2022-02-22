@@ -49,8 +49,12 @@ def leave_game(user: User, session: Session):
 
 def make_try(task_id: int, answer: str,
              user: User, session: Session):
+    game_checking = session.query(Game).filter_by(user_id=user.id).first()
+    if not game_checking:
+        raise HTTPException(status_code=403, detail='User is not in game')
     task = session.query(Task).filter_by(id=task_id).first()
     if task.right_answer == answer:
         leave_game(user=user, session=session)
         user.scores += task.scores
-    session.commit()
+        session.commit()
+    raise HTTPException(status_code=400, detail='Wrong answer')
