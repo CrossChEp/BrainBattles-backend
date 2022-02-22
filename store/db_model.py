@@ -27,6 +27,7 @@ class Task(base):
     right_answer = Column(String)
     scores = Column(Float)
     author = Column(Integer, ForeignKey('users.id'))
+    games = relationship('Game', backref='one_task', cascade='all, delete, save-update')
 
 
 class Staging(base):
@@ -40,3 +41,4 @@ class Game(base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     opponent_id = Column(Integer)
+    task = Column(Integer, ForeignKey('tasks.id'))

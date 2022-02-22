@@ -10,6 +10,9 @@ from store import User, Staging, Game, Task
 def add_to_game(user: User, session: Session):
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     staging_parameters = session.query(Staging).all()
+    tasks = session.query(Task).all()
+    random_task = random.randint(1, len(tasks))
+    task = session.query(Task).filter_by(id=random_task).first()
     if not staging:
         raise HTTPException(status_code=403, detail='You are not in staging')
     flag = False
@@ -35,6 +38,11 @@ def add_to_game(user: User, session: Session):
     session.commit()
     delete_from_staging(user=user, session=session)
     delete_from_staging(user=opponent, session=session)
+    game = session.query(Game).filter_by(user_id=user.id, opponent_id=opponent.id).first()
+    task.games.append(game)
+    game = session.query(Game).filter_by(user_id=opponent.id, opponent_id=user.id).first()
+    task.games.append(game)
+    session.commit()
 
 
 def leave_game(user: User, session: Session):
@@ -47,12 +55,11 @@ def leave_game(user: User, session: Session):
     session.commit()
 
 
-def make_try(task_id: int, answer: str,
-             user: User, session: Session):
+def make_try(answer: str, user: User, session: Session):
     game_checking = session.query(Game).filter_by(user_id=user.id).first()
     if not game_checking:
         raise HTTPException(status_code=403, detail='User is not in game')
-    task = session.query(Task).filter_by(id=task_id).first()
+    task = session.query(Task).filter_by(id=game_checking.task).first()
     if task.right_answer == answer:
         leave_game(user=user, session=session)
         user.scores += task.scores

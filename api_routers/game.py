@@ -21,10 +21,8 @@ def game_leaving(user: User = Depends(get_current_user),
 
 
 @game_router.post('/api/game/try')
-def trying(task_id: int, answer: str,
-           user: User = Depends(get_current_user),
+def trying(answer: str, user: User = Depends(get_current_user),
            session: Session = Depends(get_session)):
     return make_try(
-        task_id=task_id, answer=answer,
-        user=user, session=session
+        answer=answer, user=user, session=session
     )
