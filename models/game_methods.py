@@ -3,6 +3,7 @@ import random
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from configs import ranks
 from models import delete_from_staging
 from store import User, Staging, Game, Task
 
@@ -64,6 +65,15 @@ def make_try(answer: str, user: User, session: Session):
     if task.right_answer == answer:
         leave_game(user=user, session=session)
         user.scores += task.scores
+        scores = list(ranks.keys())
+        for index, score in enumerate(scores):
+            try:
+                if user.scores < scores[index + 1]:
+                    new_rank = ranks[score]
+                    user.rank = new_rank
+                    break
+            except IndexError:
+                pass
         session.commit()
         return
     raise HTTPException(status_code=400, detail='Wrong answer')
