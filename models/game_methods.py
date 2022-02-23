@@ -10,17 +10,19 @@ from store import User, Staging, Game, Task
 
 def add_to_game(user: User, session: Session):
     staging = session.query(Staging).filter_by(user_id=user.id).first()
-    staging_parameters = session.query(Staging).all()
-    tasks = session.query(Task).all()
-    random_task = random.randint(1, len(tasks))
-    task = session.query(Task).filter_by(id=random_task).first()
     if not staging:
         raise HTTPException(status_code=403, detail='You are not in staging')
+    staging_parameters = session.query(Staging).filter_by(subject=staging.subject).all()
+    if len(staging_parameters) <= 1:
+        raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
+    tasks = session.query(Task).filter_by(subject=staging.subject).all()
+    if not tasks:
+        raise HTTPException(status_code=404, detail='No tasks found')
+    random_task = random.randint(1, len(tasks))
+    task = session.query(Task).filter_by(id=random_task).first()
     flag = False
     opponent_id = None
     while not flag:
-        if len(staging_parameters) <= 1:
-            raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
         random_id = random.randint(1, len(staging_parameters))
         opponent_id = session.query(Staging).filter_by(id=random_id).first()
         if opponent_id.user_id != user.id:
