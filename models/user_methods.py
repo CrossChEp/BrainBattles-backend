@@ -2,6 +2,7 @@ import bcrypt
 from fastapi import Query
 from sqlalchemy.orm import Session
 
+from configs import ranks
 from schemas import UserModel
 from schemas.api_models import UserUpdate
 from store.db_model import User
@@ -19,6 +20,7 @@ def user_add(user: UserModel, session: Session):
     )
     new_user = User(**user.dict())
     new_user.scores = 0
+    new_user.rank = ranks[new_user.scores]
     session.add(new_user)
     session.commit()
 
