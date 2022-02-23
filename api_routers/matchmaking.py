@@ -9,9 +9,9 @@ matchmaking_router = APIRouter()
 
 
 @matchmaking_router.post('/api/matchmaking')
-def add_to_staging(user: User = Depends(get_current_user),
+def add_to_staging(subject: str, user: User = Depends(get_current_user),
                    session: Session = Depends(get_session)):
-    return adding_to_staging(user=user, session=session)
+    return adding_to_staging(subject=subject, user=user, session=session)
 
 
 @matchmaking_router.delete('/api/matchmaking')
