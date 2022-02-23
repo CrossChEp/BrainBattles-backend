@@ -13,6 +13,7 @@ class User(base):
     surname = Column(String)
     password = Column(String)
     scores = Column(Float)
+    rank = Column(String)
     tasks = relationship('Task', backref='user')
     staging = relationship('Staging', backref='user')
     game = relationship('Game', backref='user', cascade='all, delete, save-update')
