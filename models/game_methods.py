@@ -1,6 +1,7 @@
 import random
 
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from configs import ranks
@@ -49,9 +50,10 @@ def add_to_game(user: User, session: Session):
     flag = False
     opponent_id = None
     while not flag:
-        random_id = random.randint(1, len(staging_parameters))
+        ids = [user_id[0] for user_id in session.query(Staging.id)]
+        random_id = random.randint(ids[0], ids[-1])
         opponent_id = session.query(Staging).filter_by(id=random_id).first()
-        if opponent_id.user_id != user.id:
+        if opponent_id and opponent_id.user_id != user.id:
             flag = True
     opponent = session.query(User).filter_by(id=opponent_id.user_id).first()
     opponent_game = Game(
