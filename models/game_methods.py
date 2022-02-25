@@ -45,7 +45,8 @@ def add_to_game(user: User, session: Session):
     tasks = session.query(Task).filter_by(subject=staging.subject).all()
     if not tasks:
         raise HTTPException(status_code=404, detail='No tasks found')
-    random_task = random.randint(1, len(tasks))
+    tasks_ids = [user_id.id for user_id in tasks]
+    random_task = random.randint(tasks_ids[0], tasks_ids[-1])
     task = session.query(Task).filter_by(id=random_task).first()
     flag = False
     opponent_id = None
