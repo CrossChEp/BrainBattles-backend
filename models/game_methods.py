@@ -8,11 +8,35 @@ from models import delete_from_staging
 from store import User, Staging, Game, Task
 
 
+def add_ranks_list(ranks: dict) -> list:
+    ranks_list = []
+    for key, value in ranks.items():
+        ranks_list.append(value)
+    return ranks_list
+
+
 def add_to_game(user: User, session: Session):
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not staging:
         raise HTTPException(status_code=403, detail='You are not in staging')
-    staging_parameters = session.query(Staging).filter_by(subject=staging.subject).all()
+    all_ranks = add_ranks_list(ranks=ranks)
+    concrete_ranks = []
+    for index, rank in enumerate(all_ranks):
+        if rank == user.rank:
+            try:
+                concrete_ranks.append(all_ranks[index - 1])
+                concrete_ranks.append(rank)
+                concrete_ranks.append(all_ranks[index+1])
+            except IndexError:
+                continue
+    staging_without_rank = session.query(Staging).filter_by(
+        subject=staging.subject
+    ).all()
+    staging_parameters = [stage for stage in staging_without_rank
+                          if stage.rank == concrete_ranks[0] or
+                          stage.rank == concrete_ranks[1] or
+                          stage.rank == concrete_ranks[2]
+                          ]
     if len(staging_parameters) <= 1:
         raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
     tasks = session.query(Task).filter_by(subject=staging.subject).all()
