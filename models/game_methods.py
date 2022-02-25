@@ -32,11 +32,13 @@ def add_to_game(user: User, session: Session):
     staging_without_rank = session.query(Staging).filter_by(
         subject=staging.subject
     ).all()
-    staging_parameters = [stage for stage in staging_without_rank
-                          if stage.rank == concrete_ranks[0] or
-                          stage.rank == concrete_ranks[1] or
-                          stage.rank == concrete_ranks[2]
-                          ]
+    staging_parameters = [
+        stage for stage in staging_without_rank
+        if stage.rank == concrete_ranks[0] or
+        stage.rank == concrete_ranks[1] or
+        stage.rank == concrete_ranks[2]
+    ]
+
     if len(staging_parameters) <= 1:
         raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
     tasks = session.query(Task).filter_by(subject=staging.subject).all()
