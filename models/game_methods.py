@@ -17,6 +17,12 @@ def add_ranks_list(ranks: dict) -> list:
 
 
 def add_to_game(user: User, session: Session):
+    """
+    adds user to game
+    :param user: User
+    :param session: Session
+    :return:
+    """
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not staging:
         raise HTTPException(status_code=403, detail='You are not in staging')
@@ -79,6 +85,12 @@ def add_to_game(user: User, session: Session):
 
 
 def leave_game(user: User, session: Session):
+    """
+    deletes user from game
+    :param user: User
+    :param session: Session
+    :return:
+    """
     session_user = session.query(Game).filter_by(user_id=user.id).first()
     session_user_opponent = session.query(Game).filter_by(opponent_id=user.id).first()
     if session_user is None or session_user_opponent is None:
@@ -89,6 +101,13 @@ def leave_game(user: User, session: Session):
 
 
 def make_try(answer: str, user: User, session: Session):
+    """
+    makes try
+    :param answer: str
+    :param user: User
+    :param session: Session
+    :return:
+    """
     game_checking = session.query(Game).filter_by(user_id=user.id).first()
     if not game_checking:
         raise HTTPException(status_code=403, detail='User is not in game')
