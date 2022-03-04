@@ -1,6 +1,7 @@
 import random
 
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from configs import ranks
@@ -8,22 +9,52 @@ from models import delete_from_staging
 from store import User, Staging, Game, Task
 
 
+def add_ranks_list(ranks: dict) -> list:
+    ranks_list = []
+    for key, value in ranks.items():
+        ranks_list.append(value)
+    return ranks_list
+
+
 def add_to_game(user: User, session: Session):
     staging = session.query(Staging).filter_by(user_id=user.id).first()
-    staging_parameters = session.query(Staging).all()
-    tasks = session.query(Task).all()
-    random_task = random.randint(1, len(tasks))
-    task = session.query(Task).filter_by(id=random_task).first()
     if not staging:
         raise HTTPException(status_code=403, detail='You are not in staging')
+    all_ranks = add_ranks_list(ranks=ranks)
+    concrete_ranks = []
+    for index, rank in enumerate(all_ranks):
+        if rank == user.rank:
+            try:
+                concrete_ranks.append(all_ranks[index - 1])
+                concrete_ranks.append(rank)
+                concrete_ranks.append(all_ranks[index+1])
+            except IndexError:
+                continue
+    staging_without_rank = session.query(Staging).filter_by(
+        subject=staging.subject
+    ).all()
+    staging_parameters = [
+        stage for stage in staging_without_rank
+        if stage.rank == concrete_ranks[0] or
+        stage.rank == concrete_ranks[1] or
+        stage.rank == concrete_ranks[2]
+    ]
+
+    if len(staging_parameters) <= 1:
+        raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
+    tasks = session.query(Task).filter_by(subject=staging.subject).all()
+    if not tasks:
+        raise HTTPException(status_code=404, detail='No tasks found')
+    tasks_ids = [user_id.id for user_id in tasks]
+    random_task = random.randint(tasks_ids[0], tasks_ids[-1])
+    task = session.query(Task).filter_by(id=random_task).first()
     flag = False
     opponent_id = None
     while not flag:
-        if len(staging_parameters) <= 1:
-            raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
-        random_id = random.randint(1, len(staging_parameters))
+        ids = [user_id[0] for user_id in session.query(Staging.id)]
+        random_id = random.randint(ids[0], ids[-1])
         opponent_id = session.query(Staging).filter_by(id=random_id).first()
-        if opponent_id.user_id != user.id:
+        if opponent_id and opponent_id.user_id != user.id:
             flag = True
     opponent = session.query(User).filter_by(id=opponent_id.user_id).first()
     opponent_game = Game(

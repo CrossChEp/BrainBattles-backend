@@ -35,6 +35,8 @@ class Staging(base):
     __tablename__ = 'staging'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    rank = Column(String)
+    subject = Column(String)
 
 
 class Game(base):
