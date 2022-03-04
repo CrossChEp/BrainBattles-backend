@@ -5,6 +5,13 @@ from store import User, Staging
 
 
 def adding_to_staging(subject: str, user: User, session: Session):
+    """
+    adds user to queue
+    :param subject: str
+    :param user: User
+    :param session: Session
+    :return:
+    """
     is_staging_exists = session.query(Staging).filter_by(user_id=user.id).all()
     if is_staging_exists:
         raise HTTPException(status_code=403, detail='User already in staging')
@@ -19,6 +26,12 @@ def adding_to_staging(subject: str, user: User, session: Session):
 
 
 def delete_from_staging(user: User, session: Session):
+    """
+    deletes user from queue
+    :param user: User
+    :param session: Session
+    :return:
+    """
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not staging:
         raise HTTPException(status_code=403, detail='User is not in staging')
