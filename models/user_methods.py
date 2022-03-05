@@ -9,11 +9,22 @@ from store.db_model import User
 
 
 def users_get(session: Session):
+    """
+    gets all users from database
+    :param session: Session
+    :return: User
+    """
     users = session.query(User).all()
     return users
 
 
 def user_add(user: UserModel, session: Session):
+    """
+    adds user to database
+    :param user: UserModel
+    :param session: Session
+    :return: None
+    """
     user.password = bcrypt.hashpw(
         user.password.encode(),
         salt=bcrypt.gensalt()
@@ -26,12 +37,24 @@ def user_add(user: UserModel, session: Session):
 
 
 def user_delete(id: int, session: Session):
+    """
+    deletes user from database
+    :param id: int
+    :param session: Session
+    :return: None
+    """
     user = session.query(User).filter_by(id=id).first()
     session.delete(user)
     session.commit()
 
 
 def get_user(user: UserModel, session: Session):
+    """
+    gets concrete user
+    :param user: UserModel
+    :param session: Session
+    :return: User
+    """
     new_user = {}
     for key, value in user.dict().items():
         if value is None:
@@ -44,6 +67,13 @@ def get_user(user: UserModel, session: Session):
 
 
 def user_update(user: User, update_data: UserUpdate, session: Session):
+    """
+    updates user in database
+    :param user: User
+    :param update_data: UserUpdate
+    :param session: Session
+    :return: None
+    """
     req: Query = session.query(User).filter_by(id=user.id)
     new_user = {}
     for key, value in update_data.dict().items():

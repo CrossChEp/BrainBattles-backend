@@ -10,6 +10,11 @@ from store import User, Staging, Game, Task
 
 
 def add_ranks_list(ranks: dict) -> list:
+    """
+    creates list from ranks' dict
+    :param ranks: dict
+    :return: list
+    """
     ranks_list = []
     for key, value in ranks.items():
         ranks_list.append(value)
@@ -21,7 +26,7 @@ def add_to_game(user: User, session: Session):
     adds user to game
     :param user: User
     :param session: Session
-    :return:
+    :return: dict
     """
     staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not staging:
@@ -89,7 +94,7 @@ def leave_game(user: User, session: Session):
     deletes user from game
     :param user: User
     :param session: Session
-    :return:
+    :return: None
     """
     session_user = session.query(Game).filter_by(user_id=user.id).first()
     session_user_opponent = session.query(Game).filter_by(opponent_id=user.id).first()
@@ -106,7 +111,7 @@ def make_try(answer: str, user: User, session: Session):
     :param answer: str
     :param user: User
     :param session: Session
-    :return:
+    :return: None
     """
     game_checking = session.query(Game).filter_by(user_id=user.id).first()
     if not game_checking:
