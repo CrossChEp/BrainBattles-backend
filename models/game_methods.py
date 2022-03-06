@@ -62,12 +62,23 @@ def database_users_adding(user: User, opponent: User, session: Session):
     user_opponent = Game(opponent_id=opponent.id)
     opponent_opponent = Game(opponent_id=user.id)
     session.add(user_opponent)
-    user.game.append(opponent_opponent)
+    user.game.append(user_opponent)
     session.add(opponent_opponent)
-    opponent.game.append(user_opponent)
+    opponent.game.append(opponent_opponent)
+    session.commit()
     delete_from_staging(user=user, session=session)
     delete_from_staging(user=opponent, session=session)
     session.commit()
+
+
+def database_task_adding(task: Task, user_id: int,
+                         opponent_id: int, session: Session):
+    user_game = session.query(Game).filter_by(user_id=user_id, opponent_id=opponent_id).first()
+    opponent_game = session.query(Game).filter_by(user_id=opponent_id, opponent_id=user_id).first()
+    task.games.append(user_game)
+    task.games.append(opponent_game)
+    session.commit()
+
 
 def add_to_game(user: User, session: Session):
     """
@@ -81,20 +92,15 @@ def add_to_game(user: User, session: Session):
         raise HTTPException(status_code=403, detail='User not in queue')
     users_filtered = filtered_users(subject=user_staging.subject, session=session)
     random_user = search_opponent(users=users_filtered, user=user)
+    opponent = session.query(User).filter_by(id=random_user.user_id).first()
     tasks = session.query(Task).filter_by(subject=user_staging.subject).all()
     random_task = get_random_task(tasks=tasks)
     if not random_task:
         raise HTTPException(status_code=404, detail='No task with such subject')
-    # user_opponent = Game(opponent_id=random_user.id)
-    # opponent_opponent = Game(opponent_id=user.id)
-    # session.add(user_opponent)
-    # user.game.append(opponent_opponent)
-    # session.add(opponent_opponent)
-    # random_user.game.append(user_opponent)
-    # delete_from_staging(user=user, session=session)
-    # delete_from_staging(user=random_user, session=session)
-    # session.commit()
-    return {'task': random_task}
+    database_users_adding(user=user, opponent=opponent, session=session)
+    database_task_adding(task=random_task, user_id=user.id,
+                         opponent_id=opponent.id, session=session)
+    return {'task': random_task.id}
 
 
 def leave_game(user: User, session: Session):
