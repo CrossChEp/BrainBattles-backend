@@ -21,6 +21,54 @@ def add_ranks_list(ranks: dict) -> list:
     return ranks_list
 
 
+def filtered_users(subject: str, session: Session):
+    queue = session.query(Staging).all()
+    filtered = []
+    for user in queue:
+        if user.subject == subject:
+            filtered.append(user)
+    return filtered
+
+
+def get_random_user(users: list):
+    random_id = random.randint(0, len(users))
+    try:
+        random_user = users[random_id]
+        return random_user
+    except IndexError:
+        return False
+
+
+def get_random_task(tasks: list):
+    random_task_index = random.randint(0, len(tasks) - 1)
+    try:
+        random_task = tasks[random_task_index]
+        return random_task
+    except IndexError:
+        return False
+
+
+def search_opponent(users: list, user: User):
+    flag = False
+    random_user = None
+    while not flag:
+        random_user = get_random_user(users=users)
+        if random_user and random_user.user_id != user.id:
+            flag = True
+    return random_user
+
+
+def database_users_adding(user: User, opponent: User, session: Session):
+    user_opponent = Game(opponent_id=opponent.id)
+    opponent_opponent = Game(opponent_id=user.id)
+    session.add(user_opponent)
+    user.game.append(opponent_opponent)
+    session.add(opponent_opponent)
+    opponent.game.append(user_opponent)
+    delete_from_staging(user=user, session=session)
+    delete_from_staging(user=opponent, session=session)
+    session.commit()
+
 def add_to_game(user: User, session: Session):
     """
     adds user to game
@@ -28,65 +76,25 @@ def add_to_game(user: User, session: Session):
     :param session: Session
     :return: dict
     """
-    staging = session.query(Staging).filter_by(user_id=user.id).first()
-    if not staging:
-        raise HTTPException(status_code=403, detail='You are not in staging')
-    all_ranks = add_ranks_list(ranks=ranks)
-    concrete_ranks = []
-    for index, rank in enumerate(all_ranks):
-        if rank == user.rank:
-            try:
-                concrete_ranks.append(all_ranks[index - 1])
-                concrete_ranks.append(rank)
-                concrete_ranks.append(all_ranks[index+1])
-            except IndexError:
-                continue
-    staging_without_rank = session.query(Staging).filter_by(
-        subject=staging.subject
-    ).all()
-    staging_parameters = [
-        stage for stage in staging_without_rank
-        if stage.rank == concrete_ranks[0] or
-        stage.rank == concrete_ranks[1] or
-        stage.rank == concrete_ranks[2]
-    ]
-
-    if len(staging_parameters) <= 1:
-        raise HTTPException(status_code=403, detail='You are only person in lobby, please wait')
-    tasks = session.query(Task).filter_by(subject=staging.subject).all()
-    if not tasks:
-        raise HTTPException(status_code=404, detail='No tasks found')
-    tasks_ids = [user_id.id for user_id in tasks]
-    random_task = random.randint(tasks_ids[0], tasks_ids[-1])
-    task = session.query(Task).filter_by(id=random_task).first()
-    flag = False
-    opponent_id = None
-    while not flag:
-        ids = [user_id[0] for user_id in session.query(Staging.id)]
-        random_id = random.randint(ids[0], ids[-1])
-        opponent_id = session.query(Staging).filter_by(id=random_id).first()
-        if opponent_id and opponent_id.user_id != user.id:
-            flag = True
-    opponent = session.query(User).filter_by(id=opponent_id.user_id).first()
-    opponent_game = Game(
-        opponent_id=opponent.id
-    )
-    user_game = Game(
-        opponent_id=user.id
-    )
-    session.add(opponent_game)
-    user.game.append(opponent_game)
-    session.add(user_game)
-    opponent.game.append(user_game)
-    session.commit()
-    delete_from_staging(user=user, session=session)
-    delete_from_staging(user=opponent, session=session)
-    game = session.query(Game).filter_by(user_id=user.id, opponent_id=opponent.id).first()
-    task.games.append(game)
-    game = session.query(Game).filter_by(user_id=opponent.id, opponent_id=user.id).first()
-    task.games.append(game)
-    session.commit()
-    return {'task': task.id}
+    user_staging = session.query(Staging).filter_by(user_id=user.id).first()
+    if not user_staging:
+        raise HTTPException(status_code=403, detail='User not in queue')
+    users_filtered = filtered_users(subject=user_staging.subject, session=session)
+    random_user = search_opponent(users=users_filtered, user=user)
+    tasks = session.query(Task).filter_by(subject=user_staging.subject).all()
+    random_task = get_random_task(tasks=tasks)
+    if not random_task:
+        raise HTTPException(status_code=404, detail='No task with such subject')
+    # user_opponent = Game(opponent_id=random_user.id)
+    # opponent_opponent = Game(opponent_id=user.id)
+    # session.add(user_opponent)
+    # user.game.append(opponent_opponent)
+    # session.add(opponent_opponent)
+    # random_user.game.append(user_opponent)
+    # delete_from_staging(user=user, session=session)
+    # delete_from_staging(user=random_user, session=session)
+    # session.commit()
+    return {'task': random_task}
 
 
 def leave_game(user: User, session: Session):
