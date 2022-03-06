@@ -4,11 +4,11 @@ VBeta 0.1
 
     This api was made for BrainBattles backend
 
-###How to use it?
+### How to use it?
 The api allows you to make requests to endpoints that'll 
 give you respond that contains data json
 
-####Endpoints:
+#### Endpoints:
 Api contains some endpoints:
 
 - Users' endpoints
@@ -17,8 +17,8 @@ Api contains some endpoints:
 - Tasks endpoints
 - Auth endpoint
 
-####Usage
-###User's endpoints:
+#### Usage
+### User's endpoints:
 1. 
 
    
@@ -46,7 +46,7 @@ endpoint that deletes user from database
 endpoint that updates user's data
 
 
-###Tasks endpoints:
+### Tasks endpoints:
 
 1. 
 
@@ -78,7 +78,7 @@ endpoint that deletes task from using task id
     GET /api/user_tasks
 endpoint that gets user's tasks
 
-###Queue endpoints:
+### Queue endpoints:
 1. 
 
     
@@ -92,7 +92,7 @@ endpoint that adds user to queue
 endpoint that deletes user from queue
 
 
-###Game endpoints:
+### Game endpoints:
 1. 
 
 
@@ -113,7 +113,7 @@ endpoint for deleting user from game
 endpoint for making try
 
 
-###Authorization endpoints
+### Authorization endpoints
 
 1. 
 
