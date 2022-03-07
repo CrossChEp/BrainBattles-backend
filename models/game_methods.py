@@ -8,6 +8,25 @@ from store import User, Staging, Game, Task
 from models.game_adding_rank_methods import filter_by_rank
 
 
+def user_adding(user_staging, user: User, session: Session):
+
+    while True:
+        users_filtered_by_subject = filtered_users(subject=user_staging.subject, session=session)
+        users_filtered = filter_by_rank(users=users_filtered_by_subject, user=user)
+        if not users_filtered:
+            continue
+        random_user = search_opponent(users=users_filtered, user=user)
+        opponent = session.query(User).filter_by(id=random_user.user_id).first()
+        tasks = session.query(Task).filter_by(subject=user_staging.subject).all()
+        random_task = get_random_task(tasks=tasks)
+        if not random_task:
+            raise HTTPException(status_code=404, detail='No task with such subject')
+        database_users_adding(user=user, opponent=opponent, session=session)
+        database_task_adding(task=random_task, user_id=user.id,
+                             opponent_id=opponent.id, session=session)
+        return random_task.id
+
+
 def add_to_game(user: User, session: Session):
     """
     adds user to game
@@ -18,18 +37,8 @@ def add_to_game(user: User, session: Session):
     user_staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not user_staging:
         raise HTTPException(status_code=403, detail='User not in queue')
-    users_filtered_by_subject = filtered_users(subject=user_staging.subject, session=session)
-    users_filtered = filter_by_rank(users=users_filtered_by_subject, user=user)
-    random_user = search_opponent(users=users_filtered, user=user)
-    opponent = session.query(User).filter_by(id=random_user.user_id).first()
-    tasks = session.query(Task).filter_by(subject=user_staging.subject).all()
-    random_task = get_random_task(tasks=tasks)
-    if not random_task:
-        raise HTTPException(status_code=404, detail='No task with such subject')
-    database_users_adding(user=user, opponent=opponent, session=session)
-    database_task_adding(task=random_task, user_id=user.id,
-                         opponent_id=opponent.id, session=session)
-    return {'task': random_task.id}
+    adding = user_adding(user_staging=user_staging, user=user, session=session)
+    return {'task': adding}
 
 
 def leave_game(user: User, session: Session):

@@ -21,8 +21,9 @@ def filter_by_rank(users: list, user: User):
         for rank in range(len(ranks_list)):
             if ranks_list[rank] == user.rank:
                 try:
-                    if user_stage.rank == ranks_list[rank] or user_stage.rank == ranks_list[-1] \
-                            or user_stage.rank == ranks_list[+1]:
+                    if user_stage.user_id != user.id and (user_stage.rank == ranks_list[rank]
+                            or user_stage.rank == ranks_list[-1]
+                            or user_stage.rank == ranks_list[+1]):
                         res.append(user_stage)
                 except IndexError:
                     pass

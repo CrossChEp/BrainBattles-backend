@@ -35,6 +35,8 @@ def get_random_task(tasks: list):
 def search_opponent(users: list, user: User):
     flag = False
     random_user = None
+    if not users:
+        return False
     while not flag:
         random_user = get_random_user(users=users)
         if random_user and random_user.user_id != user.id:
