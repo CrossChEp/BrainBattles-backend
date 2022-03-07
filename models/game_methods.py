@@ -9,6 +9,13 @@ from models.game_adding_rank_methods import filter_by_rank
 
 
 def user_adding(user_staging, user: User, session: Session):
+    """
+    adds user to database
+    :param user_staging:
+    :param user: User
+    :param session: Session
+    :return: int
+    """
 
     while True:
         users_filtered_by_subject = filtered_users(subject=user_staging.subject, session=session)
@@ -34,6 +41,7 @@ def add_to_game(user: User, session: Session):
     :param session: Session
     :return: dict
     """
+
     game = session.query(Game).filter_by(user_id=user.id).first()
     if game:
         return {'task': game.task}

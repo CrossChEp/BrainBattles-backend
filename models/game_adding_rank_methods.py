@@ -15,6 +15,12 @@ def add_ranks_list(ranks: dict) -> list:
 
 
 def filter_by_rank(users: list, user: User):
+    """
+    filters users in queue regarding user's rank
+    :param users: list
+    :param user: User
+    :return: list
+    """
     ranks_list = add_ranks_list(ranks=ranks)
     res = []
     for user_stage in users:
