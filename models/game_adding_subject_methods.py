@@ -5,18 +5,6 @@ from store import Staging, User, Game, Task
 import random
 
 
-def add_ranks_list(ranks: dict) -> list:
-    """
-    creates list from ranks' dict
-    :param ranks: dict
-    :return: list
-    """
-    ranks_list = []
-    for key, value in ranks.items():
-        ranks_list.append(value)
-    return ranks_list
-
-
 def filtered_users(subject: str, session: Session):
     queue = session.query(Staging).all()
     filtered = []

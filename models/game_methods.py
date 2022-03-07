@@ -2,9 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from configs import ranks
-from models.game_adding_methods import filtered_users, search_opponent, get_random_task, database_users_adding, \
+from models.game_adding_subject_methods import filtered_users, search_opponent, get_random_task, database_users_adding, \
     database_task_adding
 from store import User, Staging, Game, Task
+from models.game_adding_rank_methods import filter_by_rank
 
 
 def add_to_game(user: User, session: Session):
@@ -17,7 +18,8 @@ def add_to_game(user: User, session: Session):
     user_staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not user_staging:
         raise HTTPException(status_code=403, detail='User not in queue')
-    users_filtered = filtered_users(subject=user_staging.subject, session=session)
+    users_filtered_by_subject = filtered_users(subject=user_staging.subject, session=session)
+    users_filtered = filter_by_rank(users=users_filtered_by_subject, user=user)
     random_user = search_opponent(users=users_filtered, user=user)
     opponent = session.query(User).filter_by(id=random_user.user_id).first()
     tasks = session.query(Task).filter_by(subject=user_staging.subject).all()
