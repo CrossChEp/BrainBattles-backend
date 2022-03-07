@@ -34,6 +34,9 @@ def add_to_game(user: User, session: Session):
     :param session: Session
     :return: dict
     """
+    game = session.query(Game).filter_by(user_id=user.id).first()
+    if game:
+        return {'task': game.task}
     user_staging = session.query(Staging).filter_by(user_id=user.id).first()
     if not user_staging:
         raise HTTPException(status_code=403, detail='User not in queue')
