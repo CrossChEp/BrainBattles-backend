@@ -193,6 +193,7 @@
   - SQLALCHEMY ORM
   - Alembic для миграций
   - Pydantic для валидации данных
+  - redis для хранение игр и очереди
 * Фронтенд:
   - React Dom
   - Язык JavaScript
