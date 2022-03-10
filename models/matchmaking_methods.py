@@ -25,7 +25,8 @@ def adding_to_staging(subject: str, user: User, session: Session):
     # session.add(staging)
     # user.staging.append(staging)
     # session.commit()
-    is_staging_exists = redis.get('queue')
+    is_staging_exists = redis.jsonget('queue')
+
 
 
 
