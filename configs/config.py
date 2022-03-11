@@ -1,4 +1,4 @@
-from rejson import Client
+from redis.client import Redis
 
 SECRET_KEY = '.AvbsFG1Ro5hx,k2DMdSg307z!uTJ9NqViOjEWny?lUaCtrYIX4-KLHw_Bc6mfpe8QZP'
 ALGORITHM = 'HS256'
@@ -20,7 +20,7 @@ ranks = {
     41781: 'pro rank 4',
 }
 
-redis = Client(
+redis = Redis(
     host='localhost',
     port=6379,
     decode_responses=True

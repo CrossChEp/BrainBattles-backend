@@ -1,5 +1,4 @@
 from configs.config import redis
-from rejson import Path
 import json
 
 
@@ -10,7 +9,6 @@ arr = [{
 arr.append({
     '132': 'FUCK'
 })
-redis.set('queue', json.dumps(arr))
 r = json.loads(redis.get('queue'))
 print(r)
 

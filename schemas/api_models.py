@@ -83,3 +83,12 @@ class TaskModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class UserQueueModel(BaseModel):
+    user_id: int
+    subject: str
+    rank: str
+
+    class Config:
+        orm_mode = True

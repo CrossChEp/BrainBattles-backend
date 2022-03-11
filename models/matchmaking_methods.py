@@ -1,12 +1,13 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from schemas import UserQueueModel
 from store import User, Staging
-
+import json
 from configs import redis
 
 
-def adding_to_staging(subject: str, user: User, session: Session):
+def adding_to_staging(subject: str, user: User):
     """
     adds user to queue
     :param subject: str
@@ -14,20 +15,22 @@ def adding_to_staging(subject: str, user: User, session: Session):
     :param session: Session
     :return:
     """
-    # is_staging_exists = session.query(Staging).filter_by(user_id=user.id).all()
-    # if is_staging_exists:
-    #     raise HTTPException(status_code=403, detail='User already in staging')
-    # staging = Staging(
-    #     user_id=user.id,
-    #     rank=user.rank,
-    #     subject=subject
-    # )
-    # session.add(staging)
-    # user.staging.append(staging)
-    # session.commit()
-    is_staging_exists = redis.jsonget('queue')
 
+    try:
+        redis.get('queue')
+    except TypeError:
+        redis.set('queue', json.dumps([]))
+    queue = json.loads(redis.get('queue'))
 
+    user_json = UserQueueModel(
+        user_id=user.id,
+        subject=subject,
+        rank=user.rank
+    )
+    if user_json.dict() in queue:
+        raise HTTPException(status_code=403, detail='User already in queue')
+    queue.append(user_json.dict())
+    redis.set('queue', json.dumps(queue))
 
 
 def delete_from_staging(user: User, session: Session):

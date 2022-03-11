@@ -18,7 +18,7 @@ def add_to_staging(subject: str, user: User = Depends(get_current_user),
     :return: Json
     """
 
-    return adding_to_staging(subject=subject, user=user, session=session)
+    return adding_to_staging(subject=subject, user=user)
 
 
 @matchmaking_router.delete('/api/matchmaking')
