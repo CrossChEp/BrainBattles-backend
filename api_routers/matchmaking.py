@@ -9,8 +9,7 @@ matchmaking_router = APIRouter()
 
 
 @matchmaking_router.post('/api/matchmaking')
-def add_to_staging(subject: str, user: User = Depends(get_current_user),
-                   session: Session = Depends(get_session)):
+def add_to_staging(subject: str, user: User = Depends(get_current_user)):
     """ POST endpoint that adds user to queue
     :param subject: str
     :param user: User
@@ -22,8 +21,7 @@ def add_to_staging(subject: str, user: User = Depends(get_current_user),
 
 
 @matchmaking_router.delete('/api/matchmaking')
-def staging_cancel(user: User = Depends(get_current_user),
-                   session: Session = Depends(get_session)):
+def staging_cancel(user: User = Depends(get_current_user)):
     """ DELETE endpoint that deletes user from queue
 
     :param user: User
@@ -31,4 +29,4 @@ def staging_cancel(user: User = Depends(get_current_user),
     :return: Json
     """
 
-    return delete_from_staging(user=user, session=session)
+    return delete_from_staging(user=user)
