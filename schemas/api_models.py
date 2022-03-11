@@ -85,10 +85,19 @@ class TaskModel(BaseModel):
         orm_mode = True
 
 
-class UserQueueModel(BaseModel):
+class QueueModel(BaseModel):
     user_id: int
     subject: str
     rank: str
+
+    class Config:
+        orm_mode = True
+
+
+class GameModel(BaseModel):
+    user_id: int
+    opponent_id: int
+    task: str
 
     class Config:
         orm_mode = True

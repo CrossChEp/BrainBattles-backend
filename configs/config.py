@@ -25,3 +25,6 @@ redis = Redis(
     port=6379,
     decode_responses=True
 )
+
+GAME = 'game'
+QUEUE = 'queue'

@@ -1,9 +1,9 @@
-from schemas import UserQueueModel
+from schemas import QueueModel
 from store import User
 
 
-def generate_queue_model(user: User, subject: str) -> UserQueueModel:
-    user_json = UserQueueModel(
+def generate_queue_model(user: User, subject: str) -> QueueModel:
+    user_json = QueueModel(
         user_id=user.id,
         subject=subject,
         rank=user.rank
@@ -19,7 +19,7 @@ def search_subject(queue: list, user_id: int):
     return subject
 
 
-def delete_user(queue: list, user_model: UserQueueModel):
+def delete_user(queue: list, user_model: QueueModel):
     for user_index, user in enumerate(queue):
         if user_model == user:
             queue.pop(user_index)
