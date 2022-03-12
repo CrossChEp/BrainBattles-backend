@@ -1,6 +1,10 @@
+import json
+
 from sqlalchemy.orm import Session
 
+from configs import redis
 from models import delete_from_staging
+from schemas.api_models import GameModel
 from store import Staging, User, Game, Task
 import random
 
@@ -31,6 +35,32 @@ def get_random_user(users: list):
         return random_user
     except IndexError:
         return False
+
+
+def check_user_in_game(user: User, games: list):
+    for game in games:
+        if game['user_id'] == user.id:
+            return {'task': int(game['task'])}
+    return False
+
+
+def generate_game_model(user_id: int, opponent_id: int, task: Task):
+    game_model = GameModel(
+        user_id=user_id,
+        opponent_id=opponent_id,
+        task=task.id
+    )
+    return game_model
+
+
+def adding_user_to_game(user: User, opponent: dict, random_task: Task):
+    user_game = generate_game_model(user_id=user.id, opponent_id=opponent['user_id'], task=random_task)
+    opponent_game = generate_game_model(user_id=opponent['user_id'], opponent_id=user.id, task=random_task)
+    games = json.loads(redis.get('game'))
+    games.append(user_game.dict())
+    games.append(opponent_game.dict())
+    redis.set('game', json.dumps(games))
+    return {'task': random_task.id}
 
 
 def get_random_task(tasks: list):
