@@ -5,19 +5,18 @@ from store import Staging, User, Game, Task
 import random
 
 
-def filtered_users(subject: str, session: Session):
+def filtered_users(subject: str, queue: list):
     """
     filters users int queue regarding user's subject
     :param subject: int
     :param session: Session
     :return: list
     """
-    queue = session.query(Staging).all()
-    filtered = []
+    res = []
     for user in queue:
-        if user.subject == subject:
-            filtered.append(user)
-    return filtered
+        if user['subject'] == subject:
+            res.append(user)
+    return res
 
 
 def get_random_user(users: list):
@@ -46,44 +45,6 @@ def get_random_task(tasks: list):
         return random_task
     except IndexError:
         return False
-
-
-def search_opponent(users: list, user: User):
-    """
-    gets opponent from queue
-    :param users: list
-    :param user: User
-    :return:
-    """
-    flag = False
-    random_user = None
-    if not users:
-        return False
-    while not flag:
-        random_user = get_random_user(users=users)
-        if random_user and random_user.user_id != user.id:
-            flag = True
-    return random_user
-
-
-def database_users_adding(user: User, opponent: User, session: Session):
-    """
-    adds users to database
-    :param user: User
-    :param opponent: User
-    :param session: Session
-    :return: None
-    """
-    user_opponent = Game(opponent_id=opponent.id)
-    opponent_opponent = Game(opponent_id=user.id)
-    session.add(user_opponent)
-    user.game.append(user_opponent)
-    session.add(opponent_opponent)
-    opponent.game.append(opponent_opponent)
-    session.commit()
-    delete_from_staging(user=user, session=session)
-    delete_from_staging(user=opponent, session=session)
-    session.commit()
 
 
 def database_task_adding(task: Task, user_id: int,

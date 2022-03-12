@@ -14,7 +14,7 @@ def add_ranks_list(ranks: dict) -> list:
     return ranks_list
 
 
-def filter_by_rank(users: list, user: User):
+def filter_by_rank(users: list, active_user: User):
     """
     filters users in queue regarding user's rank
     :param users: list
@@ -22,15 +22,17 @@ def filter_by_rank(users: list, user: User):
     :return: list
     """
     ranks_list = add_ranks_list(ranks=ranks)
+    available_ranks = []
     res = []
-    for user_stage in users:
-        for rank in range(len(ranks_list)):
-            if ranks_list[rank] == user.rank:
-                try:
-                    if user_stage.user_id != user.id and (user_stage.rank == ranks_list[rank]
-                            or user_stage.rank == ranks_list[-1]
-                            or user_stage.rank == ranks_list[+1]):
-                        res.append(user_stage)
-                except IndexError:
-                    pass
+    for index, rank in enumerate(ranks_list):
+        if rank == active_user.rank:
+            available_ranks.append(ranks_list[index - 1])
+            available_ranks.append(ranks_list[index])
+            available_ranks.append(ranks_list[index + 1])
+
+    for user in users:
+        if user['rank'] in available_ranks and user['user_id'] != active_user.id:
+           res.append(user)
+
     return res
+
