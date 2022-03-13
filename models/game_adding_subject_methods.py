@@ -54,8 +54,10 @@ def generate_game_model(user_id: int, opponent_id: int, task: Task):
 
 
 def adding_user_to_game(user: User, opponent: dict, random_task: Task):
-    user_game = generate_game_model(user_id=user.id, opponent_id=opponent['user_id'], task=random_task)
-    opponent_game = generate_game_model(user_id=opponent['user_id'], opponent_id=user.id, task=random_task)
+    user_game = generate_game_model(user_id=user.id,
+                                    opponent_id=opponent['user_id'], task=random_task)
+    opponent_game = generate_game_model(user_id=opponent['user_id'],
+                                        opponent_id=user.id, task=random_task)
     games = json.loads(redis.get('game'))
     games.append(user_game.dict())
     games.append(opponent_game.dict())
