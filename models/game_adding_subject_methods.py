@@ -60,6 +60,11 @@ def adding_user_to_game(user: User, opponent: dict, random_task: Task):
     games.append(user_game.dict())
     games.append(opponent_game.dict())
     redis.set('game', json.dumps(games))
+    queue = json.loads(redis.get('queue'))
+    for index, user_place in enumerate(queue):
+        if user_game.dict()['user_id'] == user_place['user_id']:
+            queue.pop(index)
+    redis.set('queue', json.dumps(queue))
     return {'task': random_task.id}
 
 
