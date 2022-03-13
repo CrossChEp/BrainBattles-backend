@@ -1,8 +1,24 @@
+import random
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from schemas import TaskModel
 from store import Task, User
+
+
+def get_random_task(tasks: list):
+    """
+    gets random task regarding users' subject
+    :param tasks: list
+    :return: Task, bool
+    """
+    random_task_index = random.randint(0, len(tasks) - 1)
+    try:
+        random_task = tasks[random_task_index]
+        return random_task
+    except IndexError:
+        return False
 
 
 def task_add(task: TaskModel, user: User, session: Session):

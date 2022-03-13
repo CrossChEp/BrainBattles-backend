@@ -1,5 +1,4 @@
 import json
-import random
 
 import redis
 from fastapi import HTTPException
@@ -7,13 +6,12 @@ from sqlalchemy.orm import Session
 
 from configs import ranks, QUEUE, GAME, redis
 from middlewares import create_session
-from models.game_adding_subject_methods import get_random_user, adding_user_to_game, check_user_in_game
-from models.game_adding_subject_methods import filtered_users, get_random_task, \
-    database_task_adding
-from models.matchmaking_middlewares import generate_queue_model, search_subject
-from schemas.api_models import GameModel
-from store import User, Staging, Game, Task
-from models.game_adding_rank_methods import filter_by_rank
+from models.game.game_adding_subject_methods import filtered_users
+from models.game.game_auxiliary_methods import check_user_in_game, get_random_user, adding_user_to_game
+from models.matchmaking_middlewares import search_subject
+from models.tasks_methods import get_random_task
+from store import User, Game, Task
+from models.game.game_adding_rank_methods import filter_by_rank
 
 
 def user_adding(user: User, queue: list,
