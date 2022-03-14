@@ -18,7 +18,7 @@ def filter_by_rank(users: list, active_user: User):
     """
     filters users in queue regarding user's rank
     :param users: list
-    :param user: User
+    :param active_user: User
     :return: list
     """
     ranks_list = add_ranks_list(ranks=ranks)
