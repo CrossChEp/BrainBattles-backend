@@ -31,8 +31,8 @@ def user_adding(user: User, queue: list,
     :return: dict
     """
     create_session(table_name=GAME)
-    game = json.loads(redis.get(GAME))
     while True:
+        game = json.loads(redis.get(GAME))
         checking = check_user_in_game(user=user, games=game)
         if checking:
             return checking

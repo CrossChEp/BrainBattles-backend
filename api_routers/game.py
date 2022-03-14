@@ -19,9 +19,9 @@ def game_adding(user: User = Depends(get_current_user),
     :return: dict or HTTPException
     """
 
-    #return add_to_game(user=user, session=session)
-    adding = add_user_to_game.delay(user, session)
-    adding.get(timeout=3)
+    return add_to_game(user=user, session=session)
+    #ding = add_user_to_game.delay(user, session)
+    # adding.get(timeout=3)
 
 
 @game_router.delete('/api/game/cancel')

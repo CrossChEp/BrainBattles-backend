@@ -32,6 +32,7 @@ def check_user_in_queue(user: User, queue: list):
     for user_place in queue:
         if user_place['user_id'] == user.id:
             return user_place
+    return False
 
 
 def check_user_in_game(user: User, games: list):
