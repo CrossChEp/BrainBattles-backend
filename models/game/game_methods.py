@@ -33,9 +33,9 @@ def user_adding(user: User, queue: list,
     create_session(table_name=GAME)
     while True:
         game = json.loads(redis.get(GAME))
-        queue = create_session(QUEUE)
+        general_queue = create_session(QUEUE)
         checking = check_user_in_game(user=user, games=game)
-        checking_queue = check_user_in_queue(user, queue)
+        checking_queue = check_user_in_queue(user, general_queue)
         if checking:
             return checking
         if not checking_queue:
@@ -69,9 +69,9 @@ def add_to_game(user: User, session: Session):
     subject = search_subject(queue=queue, user_id=user.id)
     if not subject:
         raise HTTPException(status_code=403, detail='User not in queue')
-    opponents = filtered_users(subject=subject, queue=queue)
-    opponents = filter_by_rank(users=opponents, active_user=user)
-    task = user_adding(user=user, queue=opponents, subject=subject, session=session)
+    # opponents = filtered_users(subject=subject, queue=queue)
+    # opponents = filter_by_rank(users=opponents, active_user=user)
+    task = user_adding(user=user, queue=queue, subject=subject, session=session)
     return task
 
 
@@ -90,7 +90,6 @@ def leave_game(user: User, session: Session):
     user_model = generate_game_model(user_id=user.id,
                                      opponent_id=user_game['opponent_id'], task=task)
     game = delete_from_game(user_model=user_model, game=game)
-    queu = delete_from_queue()
     redis.set(GAME, json.dumps(game))
 
 
