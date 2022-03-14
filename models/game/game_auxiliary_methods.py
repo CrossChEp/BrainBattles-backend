@@ -7,6 +7,13 @@ from schemas.api_models import GameModel
 from store import User, Task
 
 
+def find_game(user: User, games: list):
+    for game in games:
+        if game['user_id'] == user.id:
+            return game
+    return None
+
+
 def get_random_user(users: list):
     """
     gets random user from queue

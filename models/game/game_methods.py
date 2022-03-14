@@ -6,8 +6,11 @@ from sqlalchemy.orm import Session
 
 from configs import ranks, QUEUE, GAME, redis
 from middlewares import create_session
+from models import task_get
 from models.game.game_adding_subject_methods import filtered_users
-from models.game.game_auxiliary_methods import check_user_in_game, get_random_user, adding_user_to_game
+from models.game.game_auxiliary_methods import check_user_in_game, get_random_user, adding_user_to_game, find_game, \
+    generate_game_model
+from models.game.game_deleting_methods import delete_from_game
 from models.matchmaking_middlewares import search_subject
 from models.tasks_methods import get_random_task
 from store import User, Game, Task
@@ -71,13 +74,15 @@ def leave_game(user: User, session: Session):
     :param session: Session
     :return: None
     """
-    session_user = session.query(Game).filter_by(user_id=user.id).first()
-    session_user_opponent = session.query(Game).filter_by(opponent_id=user.id).first()
-    if session_user is None or session_user_opponent is None:
-        raise HTTPException(status_code=403, detail='User is not in the game')
-    session.delete(session_user)
-    session.delete(session_user_opponent)
-    session.commit()
+    game = create_session(GAME)
+    user_game = find_game(user=user, games=game)
+    if not user_game:
+        raise HTTPException(status_code=403, detail='User not in game')
+    task = task_get(task_id=user_game['task'], session=session)
+    user_model = generate_game_model(user_id=user.id,
+                                     opponent_id=user_game['opponent_id'], task=task)
+    game = delete_from_game(user_model=user_model, game=game)
+    redis.set(GAME, json.dumps(game))
 
 
 def make_try(answer: str, user: User, session: Session):
