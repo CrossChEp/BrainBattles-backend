@@ -12,7 +12,7 @@ from middlewares import create_session
 from models import task_get
 from models.game.game_adding_subject_methods import filtered_users
 from models.game.game_auxiliary_methods import check_user_in_game, \
-    get_random_user, adding_user_to_game, find_game, generate_game_model
+    get_random_user, adding_user_to_game, find_game, generate_game_model, delete_from_queue, check_user_in_queue
 from models.game.game_deleting_methods import delete_from_game
 from models.game.game_adding_rank_methods import filter_by_rank
 from models.matchmaking_middlewares import search_subject
@@ -33,9 +33,13 @@ def user_adding(user: User, queue: list,
     create_session(table_name=GAME)
     while True:
         game = json.loads(redis.get(GAME))
+        queue = create_session(QUEUE)
         checking = check_user_in_game(user=user, games=game)
+        checking_queue = check_user_in_queue(user, queue)
         if checking:
             return checking
+        if not checking_queue:
+            raise HTTPException(status_code=403, detail='User not in queue')
         opponents = filtered_users(subject=subject, queue=queue)
         opponents = filter_by_rank(users=opponents, active_user=user)
         if not opponents:
@@ -86,6 +90,7 @@ def leave_game(user: User, session: Session):
     user_model = generate_game_model(user_id=user.id,
                                      opponent_id=user_game['opponent_id'], task=task)
     game = delete_from_game(user_model=user_model, game=game)
+    queu = delete_from_queue()
     redis.set(GAME, json.dumps(game))
 
 
