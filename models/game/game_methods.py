@@ -1,3 +1,6 @@
+"""Module for adding user to game"""
+
+
 import json
 
 import redis
@@ -8,23 +11,24 @@ from configs import ranks, QUEUE, GAME, redis
 from middlewares import create_session
 from models import task_get
 from models.game.game_adding_subject_methods import filtered_users
-from models.game.game_auxiliary_methods import check_user_in_game, get_random_user, adding_user_to_game, find_game, \
-    generate_game_model
+from models.game.game_auxiliary_methods import check_user_in_game, \
+    get_random_user, adding_user_to_game, find_game, generate_game_model
 from models.game.game_deleting_methods import delete_from_game
+from models.game.game_adding_rank_methods import filter_by_rank
 from models.matchmaking_middlewares import search_subject
 from models.tasks_methods import get_random_task
 from store import User, Game, Task
-from models.game.game_adding_rank_methods import filter_by_rank
 
 
 def user_adding(user: User, queue: list,
                 subject: str, session: Session):
     """
     adds user to database
-    :param user_staging:
     :param user: User
+    :param queue: list
+    :param subject: str
     :param session: Session
-    :return: int
+    :return: dict
     """
     create_session(table_name=GAME)
     game = json.loads(redis.get(GAME))
