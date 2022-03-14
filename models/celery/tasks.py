@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from celerys import app
+from .celerys import app
 from models import add_to_game
 from store import User
 
