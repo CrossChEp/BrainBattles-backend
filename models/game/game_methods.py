@@ -101,10 +101,11 @@ def make_try(answer: str, user: User, session: Session):
     :param session: Session
     :return: None
     """
-    game_checking = session.query(Game).filter_by(user_id=user.id).first()
+    games = create_session(GAME)
+    game_checking = find_game(user=user, games=games)
     if not game_checking:
         raise HTTPException(status_code=403, detail='User is not in game')
-    task = session.query(Task).filter_by(id=game_checking.task).first()
+    task = session.query(Task).filter_by(id=game_checking['task']).first()
     if task.right_answer == answer:
         leave_game(user=user, session=session)
         user.scores += task.scores
