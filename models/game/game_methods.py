@@ -49,7 +49,6 @@ def user_adding(user: User, queue: list,
         if not opponent:
             continue
         tasks = filter_task_by_rank(user=user, subject=subject, session=session)
-        # tasks = session.query(Task).filter_by(subject=subject).all()
         if not tasks:
             raise HTTPException(status_code=404, detail='No task with such subject')
         random_task = get_random_task(tasks)

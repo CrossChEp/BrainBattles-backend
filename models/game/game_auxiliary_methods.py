@@ -8,6 +8,12 @@ from store import User, Task
 
 
 def find_game(user: User, games: list):
+    """ finds user's game
+    :param user: User
+    :param games: List[GameModel]
+    :return game, None: GameModel, None
+    """
+
     for game in games:
         if game['user_id'] == user.id:
             return game
@@ -29,6 +35,14 @@ def get_random_user(users: list):
 
 
 def check_user_in_queue(user: User, queue: list):
+    """ Checks if user in queue
+        and if yes, returns user's place
+
+    :param user: User
+    :param queue: List[QueueModel]
+    :return user_place, False: QueueMode, bool
+
+    """
     for user_place in queue:
         if user_place['user_id'] == user.id:
             return user_place
@@ -36,6 +50,13 @@ def check_user_in_queue(user: User, queue: list):
 
 
 def check_user_in_game(user: User, games: list):
+    """ Checks if user in games
+        and if yes, returns game task
+    :param user: User
+    :param games: List[GameModel]
+    :return dict, False: dict, bool
+
+    """
     for game in games:
         if game['user_id'] == user.id:
             queue = create_session(QUEUE)
@@ -48,6 +69,15 @@ def check_user_in_game(user: User, games: list):
 
 
 def generate_game_model(user_id: int, opponent_id: int, task: Task):
+    """ generates game model using user id,
+        opponent id and task
+
+    :param user_id: int
+    :param opponent_id: int
+    :param task: Task
+    :return game_model: GameModel
+
+    """
     game_model = GameModel(
         user_id=user_id,
         opponent_id=opponent_id,
@@ -57,6 +87,12 @@ def generate_game_model(user_id: int, opponent_id: int, task: Task):
 
 
 def delete_from_queue(queue: list, user_model: GameModel):
+    """ deletes user from queue
+    :param queue: List[QueueModel]
+    :param user_model: GameModel
+    :return queue: List[QueueModel]
+
+    """
     for index, user_place in enumerate(queue):
         if user_model.dict()['user_id'] == user_place['user_id']:
             queue.pop(index)
@@ -64,6 +100,13 @@ def delete_from_queue(queue: list, user_model: GameModel):
 
 
 def adding_user_to_game(user: User, opponent: dict, random_task: Task):
+    """ adds user to game
+    :param user: User
+    :param opponent: dict
+    :param random_task: Task
+    :return: dict
+
+    """
     user_game = generate_game_model(user_id=user.id,
                                     opponent_id=opponent['user_id'], task=random_task)
     opponent_game = generate_game_model(user_id=opponent['user_id'],

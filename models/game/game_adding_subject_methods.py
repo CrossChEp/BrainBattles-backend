@@ -1,8 +1,8 @@
 def filtered_users(subject: str, queue: list):
     """
-    filters users int queue regarding user's subject
+    filters users in queue regarding user's subject
     :param subject: int
-    :param session: Session
+    :param queue: List[QueueModel]
     :return: list
     """
     res = []

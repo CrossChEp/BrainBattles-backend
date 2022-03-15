@@ -6,6 +6,13 @@ from store import User, Task
 
 
 def filter_task_by_rank(user: User, subject: str, session: Session):
+    """ filters all tasks by user's rank
+
+    :param user: User
+    :param subject: str
+    :session: Session
+    :return filtered_tasks: List[Task]
+    """
     db_tasks = session.query(Task).filter_by(subject=subject).all()
     tasks_list = add_ranks_list(ranks=ranks)
     filtered_tasks = []

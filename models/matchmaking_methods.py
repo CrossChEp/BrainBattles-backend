@@ -26,7 +26,7 @@ def adding_to_staging(subject: str, user: User):
 
 def delete_from_staging(user: User):
     """
-    deletes user from queue
+    deletes user from queue(redis)
     :param user: User
     :return: None
     """
