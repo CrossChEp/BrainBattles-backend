@@ -12,6 +12,7 @@ from middlewares import create_session
 from models import task_get
 from models.game.game_adding_rank_methods import filter_by_rank
 from models.game.game_adding_subject_methods import filtered_users
+from models.game.game_adding_task_methods import filter_task_by_rank
 from models.game.game_auxiliary_methods import check_user_in_game, \
     get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue
 from models.game.game_deleting_methods import delete_from_game
@@ -47,7 +48,7 @@ def user_adding(user: User, queue: list,
         opponent = get_random_user(users=opponents)
         if not opponent:
             continue
-        tasks = session.query(Task).filter_by(subject=subject).all()
+        tasks = filter_task_by_rank(user=user, subject=subject, session=session)
         if not tasks:
             raise HTTPException(status_code=404, detail='No task with such subject')
         random_task = get_random_task(tasks)
