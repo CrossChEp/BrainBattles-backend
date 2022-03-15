@@ -10,14 +10,14 @@ from sqlalchemy.orm import Session
 from configs import ranks, QUEUE, GAME, redis
 from middlewares import create_session
 from models import task_get
+from models.game.game_adding_rank_methods import filter_by_rank
 from models.game.game_adding_subject_methods import filtered_users
 from models.game.game_auxiliary_methods import check_user_in_game, \
-    get_random_user, adding_user_to_game, find_game, generate_game_model, delete_from_queue, check_user_in_queue
+    get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue
 from models.game.game_deleting_methods import delete_from_game
-from models.game.game_adding_rank_methods import filter_by_rank
 from models.matchmaking_middlewares import search_subject
 from models.tasks_methods import get_random_task
-from store import User, Game, Task
+from store import User, Task
 
 
 def user_adding(user: User, queue: list,
