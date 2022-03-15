@@ -1,18 +1,14 @@
 from datetime import timedelta, datetime
 from typing import Optional
 
-from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from starlette.status import HTTP_401_UNAUTHORIZED
 
-import store
-from configs import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from schemas import TokenData, UserModel
+from configs import SECRET_KEY, ALGORITHM
 from models.user_methods import get_user
-
+from schemas import UserModel
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 

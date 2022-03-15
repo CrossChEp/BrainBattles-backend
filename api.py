@@ -25,6 +25,11 @@ app.add_middleware(
 )
 
 
+@app.get('/')
+def index():
+    return {'info': 'server started'}
+
+
 app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(tasks_router)

@@ -1,39 +1,42 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
 
-from store import User, Staging
+from middlewares import create_session
+from models.matchmaking_middlewares import generate_queue_model, search_subject, delete_user
+from store import User
+import json
+from configs import redis, QUEUE
 
 
-def adding_to_staging(subject: str, user: User, session: Session):
+def adding_to_staging(subject: str, user: User):
     """
     adds user to queue
     :param subject: str
     :param user: User
-    :param session: Session
-    :return:
+    :return: None
     """
-    is_staging_exists = session.query(Staging).filter_by(user_id=user.id).all()
-    if is_staging_exists:
-        raise HTTPException(status_code=403, detail='User already in staging')
-    staging = Staging(
-        user_id=user.id,
-        rank=user.rank,
-        subject=subject
-    )
-    session.add(staging)
-    user.staging.append(staging)
-    session.commit()
+
+    create_session(table_name=QUEUE)
+    queue = json.loads(redis.get(QUEUE))
+    user_json = generate_queue_model(user=user, subject=subject)
+    if user_json.dict() in queue:
+        raise HTTPException(status_code=403, detail='User already in queue')
+    queue.append(user_json.dict())
+    redis.set('queue', json.dumps(queue))
 
 
-def delete_from_staging(user: User, session: Session):
+def delete_from_staging(user: User):
     """
     deletes user from queue
     :param user: User
-    :param session: Session
-    :return:
+    :return: None
     """
-    staging = session.query(Staging).filter_by(user_id=user.id).first()
-    if not staging:
+
+    create_session(table_name=QUEUE)
+    queue = json.loads(redis.get(QUEUE))
+    subject = search_subject(queue=queue, user_id=user.id)
+    if not subject:
         raise HTTPException(status_code=403, detail='User is not in staging')
-    session.delete(staging)
-    session.commit()
+    user_model = generate_queue_model(user=user, subject=subject)
+    queue = delete_user(user_model=user_model, queue=queue)
+    redis.set(QUEUE, json.dumps(queue))
+

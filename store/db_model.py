@@ -15,8 +15,6 @@ class User(base):
     scores = Column(Float)
     rank = Column(String)
     tasks = relationship('Task', backref='user')
-    staging = relationship('Staging', backref='user')
-    game = relationship('Game', backref='user', cascade='all, delete, save-update')
 
 
 class Task(base):
@@ -27,21 +25,5 @@ class Task(base):
     content = Column(String)
     right_answer = Column(String)
     scores = Column(Float)
-    author = Column(Integer, ForeignKey('users.id'))
-    games = relationship('Game', backref='one_task', cascade='all, delete, save-update')
-
-
-class Staging(base):
-    __tablename__ = 'staging'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
     rank = Column(String)
-    subject = Column(String)
-
-
-class Game(base):
-    __tablename__ = 'games'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    opponent_id = Column(Integer)
-    task = Column(Integer, ForeignKey('tasks.id'))
+    author = Column(Integer, ForeignKey('users.id'))

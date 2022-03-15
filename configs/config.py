@@ -1,3 +1,5 @@
+from redis.client import Redis
+
 SECRET_KEY = '.AvbsFG1Ro5hx,k2DMdSg307z!uTJ9NqViOjEWny?lUaCtrYIX4-KLHw_Bc6mfpe8QZP'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -17,3 +19,12 @@ ranks = {
     35890: 'pro rank 3',
     41781: 'pro rank 4',
 }
+
+redis = Redis(
+    host='localhost',
+    port=6379,
+    decode_responses=True
+)
+
+GAME = 'game'
+QUEUE = 'queue'
