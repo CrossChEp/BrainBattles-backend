@@ -3,6 +3,8 @@ import random
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from configs import ranks
+from models.game.game_adding_rank_methods import add_ranks_list
 from schemas import TaskModel
 from store import Task, User
 
@@ -29,6 +31,9 @@ def task_add(task: TaskModel, user: User, session: Session):
     :param session: Session
     :return: None
     """
+    rank_list = add_ranks_list(ranks)
+    if task.rank not in rank_list:
+        raise HTTPException(status_code=400, detail='Wrong rank')
     new_task = Task(**task.dict())
     user.tasks.append(new_task)
     session.add(new_task)
