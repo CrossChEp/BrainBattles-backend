@@ -28,6 +28,13 @@ class UserModel(BaseModel):
         orm_mode = True
 
 
+class UserGetModel(UserModel):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class UserUpdate(UserModel):
 
     class Config:
@@ -55,7 +62,7 @@ class TokenData(BaseModel):
         fields:
         username: Optional[str]
     """
-    username: Optional[str] = None
+    id: Optional[int] = None
 
     class Config:
         orm_mode = True

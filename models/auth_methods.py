@@ -6,9 +6,9 @@ from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from configs import SECRET_KEY, ALGORITHM
+from configs import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from models.user_methods import get_user
-from schemas import UserModel
+from schemas import UserModel, UserGetModel
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -23,8 +23,8 @@ def get_password(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(session: Session, nickname: str, password: str):
-    user = get_user(user=UserModel(nickname=nickname), session=session)
+def authenticate_user(session: Session, username: str, password: str):
+    user = get_user(user=UserModel(nickname=username), session=session)
     if not user:
         return False
     if not verify_password_hash(password, user.password):
@@ -32,12 +32,9 @@ def authenticate_user(session: Session, nickname: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+def create_access_token(uid: int):
+    to_encode = {'id': uid}
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({'exp': expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

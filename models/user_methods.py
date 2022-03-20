@@ -3,7 +3,7 @@ from fastapi import Query
 from sqlalchemy.orm import Session
 
 from configs import ranks
-from schemas import UserModel
+from schemas import UserModel, UserGetModel
 from schemas.api_models import UserUpdate
 from store.db_model import User
 
@@ -46,6 +46,11 @@ def user_delete(id: int, session: Session):
     user = session.query(User).filter_by(id=id).first()
     session.delete(user)
     session.commit()
+
+
+def get_user_by_id(uid: int, session: Session) -> User:
+    user = session.query(User).filter_by(id=uid).first()
+    return user
 
 
 def get_user(user: UserModel, session: Session):
