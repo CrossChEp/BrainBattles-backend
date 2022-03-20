@@ -39,6 +39,7 @@ class UserGetModel(UserModel):
 
 
 class UserUpdate(UserModel):
+    avatar: Optional[str]
 
     class Config:
         orm_mode = True
