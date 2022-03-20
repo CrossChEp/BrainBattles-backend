@@ -1,8 +1,11 @@
+import base64
+
 import bcrypt
 from fastapi import Query
 from sqlalchemy.orm import Session
 
 from configs import ranks
+from models.image_methods import decode_image
 from schemas import UserModel, UserGetModel
 from schemas.api_models import UserUpdate
 from store.db_model import User
@@ -29,6 +32,12 @@ def user_add(user: UserModel, session: Session):
         user.password.encode(),
         salt=bcrypt.gensalt()
     )
+    if user.avatar is None:
+        with open('/store/user_image.jpeg', 'rb') as image:
+            user.avatar = base64.encodebytes(image.read()).hex()
+        with open(f'/static/{user.nickname}.jpeg', 'wb') as pfp:
+            image = decode_image(user.avatar)
+            pfp.write(image)
     new_user = User(**user.dict())
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
