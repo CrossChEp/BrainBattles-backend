@@ -30,6 +30,8 @@ class UserModel(BaseModel):
 
 class UserGetModel(UserModel):
     id: int
+    scores: int
+    rank: str
 
     class Config:
         orm_mode = True
