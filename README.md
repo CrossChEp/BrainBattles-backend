@@ -1,5 +1,5 @@
 # BrainBattles.api 
-VBeta 0.2
+VBeta 0.3
 
 
     This api was made for BrainBattles backend
