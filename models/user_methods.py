@@ -36,14 +36,14 @@ def user_add(user: UserModel, session: Session):
     session.commit()
 
 
-def user_delete(id: int, session: Session):
+def user_delete(user: User, session: Session):
     """
     deletes user from database
-    :param id: int
+    :param user: User
     :param session: Session
     :return: None
     """
-    user = session.query(User).filter_by(id=id).first()
+    user = session.query(User).filter_by(id=user.id).first()
     session.delete(user)
     session.commit()
 

@@ -10,7 +10,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 
 from configs import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from schemas import Token, UserModel, TokenData, UserGetModel
-from models import authenticate_user, get_user, get_user_by_id
+from models import authenticate_user, get_user_by_id
 from store import get_session, User
 from models.auth_methods import create_access_token
 
@@ -56,6 +56,6 @@ def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(),
     return Token(access_token=access_token, token_type='bearer')
 
 
-@auth_router.get('/user/me', response_model=UserModel)
+@auth_router.get('/user/me', response_model=UserGetModel)
 def read_user_me(current_user: User = Depends(get_current_user)):
     return current_user

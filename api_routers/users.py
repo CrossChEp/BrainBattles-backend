@@ -34,15 +34,16 @@ def add_user(user: UserModel, session: Session = Depends(get_session)):
 
 
 @users_router.delete('/api/users')
-def delete_user(id: int, session: Session = Depends(get_session)):
+def delete_user(user: User = Depends(get_current_user),
+                session: Session = Depends(get_session)):
     """ DELETE endpoint that deletes user from database
 
-    :param id: int
+    :param user: User
     :param session: Session
     :return: None
     """
 
-    return user_delete(id=id, session=session)
+    return user_delete(user=user, session=session)
 
 
 @users_router.put('/api/users')
