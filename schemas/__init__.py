@@ -12,4 +12,5 @@ Classes
         scheme of task
 """
 
-from schemas.api_models import UserModel, Token, TokenData, TaskModel, QueueModel
+from schemas.api_models import UserModel, UserGetModel, Token, TokenData,\
+    TaskModel, QueueModel

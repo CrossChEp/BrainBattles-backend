@@ -23,12 +23,23 @@ class UserModel(BaseModel):
     name: Optional[str]
     surname: Optional[str]
     password: Optional[str]
+    avatar: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class UserGetModel(UserModel):
+    id: int
+    scores: int
+    rank: str
 
     class Config:
         orm_mode = True
 
 
 class UserUpdate(UserModel):
+    avatar: Optional[str]
 
     class Config:
         orm_mode = True
@@ -55,7 +66,7 @@ class TokenData(BaseModel):
         fields:
         username: Optional[str]
     """
-    username: Optional[str] = None
+    id: Optional[int] = None
 
     class Config:
         orm_mode = True

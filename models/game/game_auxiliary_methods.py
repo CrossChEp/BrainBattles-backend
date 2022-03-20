@@ -64,7 +64,11 @@ def check_user_in_game(user: User, games: list):
             if queue and user_queue_place:
                 queue.pop(queue.index(user_queue_place))
                 redis.set('queue', json.dumps(queue))
-            return {'task': int(game['task'])}
+            return GameModel(
+                user_id=game['user_id'],
+                opponent_id=game['opponent_id'],
+                task=int(game['task'])
+            )
     return False
 
 
@@ -81,7 +85,7 @@ def generate_game_model(user_id: int, opponent_id: int, task: Task):
     game_model = GameModel(
         user_id=user_id,
         opponent_id=opponent_id,
-        task=task.id
+        task=int(task.id)
     )
     return game_model
 
@@ -118,4 +122,4 @@ def adding_user_to_game(user: User, opponent: dict, random_task: Task):
     queue = json.loads(redis.get('queue'))
     queue = delete_from_queue(queue=queue, user_model=user_game)
     redis.set('queue', json.dumps(queue))
-    return {'task': random_task.id}
+    return user_game

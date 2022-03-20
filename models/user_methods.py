@@ -1,9 +1,12 @@
+import base64
+
 import bcrypt
-from fastapi import Query
+from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 
 from configs import ranks
-from schemas import UserModel
+from models.image_methods import decode_image
+from schemas import UserModel, UserGetModel
 from schemas.api_models import UserUpdate
 from store.db_model import User
 
@@ -29,6 +32,11 @@ def user_add(user: UserModel, session: Session):
         user.password.encode(),
         salt=bcrypt.gensalt()
     )
+    with open('store/user_image.jpeg', 'rb') as image:
+        user.avatar = base64.encodebytes(image.read()).hex()
+    with open(f'static/{user.nickname}.jpeg', 'wb') as pfp:
+        image = decode_image(user.avatar)
+        pfp.write(image)
     new_user = User(**user.dict())
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
@@ -36,16 +44,21 @@ def user_add(user: UserModel, session: Session):
     session.commit()
 
 
-def user_delete(id: int, session: Session):
+def user_delete(user: User, session: Session):
     """
     deletes user from database
-    :param id: int
+    :param user: User
     :param session: Session
     :return: None
     """
-    user = session.query(User).filter_by(id=id).first()
+    user = session.query(User).filter_by(id=user.id).first()
     session.delete(user)
     session.commit()
+
+
+def get_user_by_id(uid: int, session: Session) -> User:
+    user = session.query(User).filter_by(id=uid).first()
+    return user
 
 
 def get_user(user: UserModel, session: Session):
@@ -74,6 +87,12 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     :param session: Session
     :return: None
     """
+    try:
+        if user.nickname.lower() == 'con':
+            raise HTTPException(status_code=406, detail='user with nickname "con" are not allowed')
+    except AttributeError:
+        pass
+
     req: Query = session.query(User).filter_by(id=user.id)
     new_user = {}
     for key, value in update_data.dict().items():
@@ -86,4 +105,8 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
             )
         new_user[key] = value
     req.update(new_user)
+    if user.avatar is not None:
+        with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
+            pfp = decode_image(user.avatar)
+            img.write(pfp)
     session.commit()
