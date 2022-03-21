@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
-from models import add_to_game, leave_game, make_try
+from models import add_to_game, leave_game, make_try, winner_check
 from store import User, get_session
 
 game_router = APIRouter()
@@ -48,3 +48,8 @@ def trying(answer: str, user: User = Depends(get_current_user),
     return make_try(
         answer=answer, user=user, session=session
     )
+
+
+@game_router.get('/api/game/winner')
+def check_winner(user: User = Depends(get_current_user)):
+    return winner_check(user=user)

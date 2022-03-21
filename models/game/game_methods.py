@@ -31,6 +31,7 @@ def user_adding(user: User, queue: list,
     :param session: Session
     :return: dict
     """
+    get_redis_table(GAME)
     while True:
         game = get_redis_table(GAME)
         general_queue = get_redis_table(QUEUE)

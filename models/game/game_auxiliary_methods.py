@@ -1,7 +1,8 @@
 import json
 import random
 
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from sqlalchemy.orm import Session, create_session
 
 from configs import redis, QUEUE, GAME
 from middlewares import get_redis_table
@@ -159,4 +160,22 @@ def set_winner(game: dict, user: User, session: Session):
             special_game = opponent_game
 
     redis.set(GAME, json.dumps(games))
+
+
+def winner_check(user: User) -> bool:
+    """ checks if user winner or
+        has the opponent already won
+    :param user: User
+        current user
+    :return: bool
+    """
+
+    games = get_redis_table(GAME)
+    game = find_game(user=user, games=games)
+    if not game:
+        raise HTTPException(status_code=403, detail='User not in game')
+    if winner_exists(game):
+        if game['winner'] != user.id:
+            return True
+    return False
 
