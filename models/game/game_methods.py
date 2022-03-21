@@ -8,13 +8,13 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from configs import ranks, QUEUE, GAME, redis
-from middlewares import create_session
+from middlewares import get_redis_table
 from models import task_get
 from models.game.game_adding_rank_methods import filter_by_rank
 from models.game.game_adding_subject_methods import filtered_users
 from models.game.game_adding_task_methods import filter_task_by_rank
 from models.game.game_auxiliary_methods import check_user_in_game, \
-    get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue
+    get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue, winner_exists, set_winner
 from models.game.game_deleting_methods import delete_from_game
 from models.matchmaking_middlewares import search_subject
 from models.tasks_methods import get_random_task
@@ -31,10 +31,10 @@ def user_adding(user: User, queue: list,
     :param session: Session
     :return: dict
     """
-    create_session(table_name=GAME)
+    #create_session(table_name=GAME)
     while True:
-        game = json.loads(redis.get(GAME))
-        general_queue = create_session(QUEUE)
+        game = get_redis_table(GAME)
+        general_queue = get_redis_table(QUEUE)
         checking = check_user_in_game(user=user, games=game)
         checking_queue = check_user_in_queue(user, general_queue)
         if checking:
@@ -65,7 +65,7 @@ def add_to_game(user: User, session: Session):
     :param session: Session
     :return: dict
     """
-    create_session(table_name=QUEUE)
+    get_redis_table(table_name=QUEUE)
     queue = json.loads(redis.get(QUEUE))
     subject = search_subject(queue=queue, user_id=user.id)
     if not subject:
@@ -83,7 +83,7 @@ def leave_game(user: User, session: Session):
     :param session: Session
     :return: None
     """
-    game = create_session(GAME)
+    game = get_redis_table(GAME)
     user_game = find_game(user=user, games=game)
     if not user_game:
         raise HTTPException(status_code=403, detail='User not in game')
@@ -102,23 +102,32 @@ def make_try(answer: str, user: User, session: Session):
     :param session: Session
     :return: None
     """
-    games = create_session(GAME)
+    games = get_redis_table(GAME)
     game_checking = find_game(user=user, games=games)
     if not game_checking:
         raise HTTPException(status_code=403, detail='User is not in game')
     task = session.query(Task).filter_by(id=game_checking['task']).first()
     if task.right_answer == answer:
-        leave_game(user=user, session=session)
-        user.scores += task.scores
-        scores = list(ranks.keys())
-        for index, score in enumerate(scores):
-            try:
-                if user.scores < scores[index + 1]:
-                    new_rank = ranks[score]
-                    user.rank = new_rank
-                    break
-            except IndexError:
-                pass
-        session.commit()
-        return
+        if not winner_exists(game=game_checking):
+            set_winner(game=game_checking, user=user, session=session)
+            successful_try(user=user, task=task, session=session)
+            return
+        if winner_exists(game_checking) and game_checking['winner'] != user.id:
+            leave_game(user=user, session=session)
+            raise HTTPException(status_code=403, detail='You lost')
     raise HTTPException(status_code=400, detail='Wrong answer')
+
+
+def successful_try(user: User, task: Task, session: Session):
+    leave_game(user=user, session=session)
+    user.scores += task.scores
+    scores = list(ranks.keys())
+    for index, score in enumerate(scores):
+        try:
+            if user.scores < scores[index + 1]:
+                new_rank = ranks[score]
+                user.rank = new_rank
+                break
+        except IndexError:
+            pass
+    session.commit()

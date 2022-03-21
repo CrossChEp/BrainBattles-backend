@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from middlewares import create_session
+from middlewares import get_redis_table
 from models.matchmaking_middlewares import generate_queue_model, search_subject, delete_user
 from store import User
 import json
@@ -15,7 +15,7 @@ def adding_to_staging(subject: str, user: User):
     :return: None
     """
 
-    create_session(table_name=QUEUE)
+    get_redis_table(table_name=QUEUE)
     queue = json.loads(redis.get(QUEUE))
     user_json = generate_queue_model(user=user, subject=subject)
     if user_json.dict() in queue:
@@ -31,7 +31,7 @@ def delete_from_staging(user: User):
     :return: None
     """
 
-    create_session(table_name=QUEUE)
+    get_redis_table(table_name=QUEUE)
     queue = json.loads(redis.get(QUEUE))
     subject = search_subject(queue=queue, user_id=user.id)
     if not subject:
