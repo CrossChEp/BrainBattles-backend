@@ -130,12 +130,23 @@ def adding_user_to_game(user: User, opponent: dict, random_task: Task):
 
 
 def winner_exists(game: dict):
+    """ checks if winner already exists in game
+    :param game: dict
+    :return: bool
+    """
     if game['winner']:
         return True
     return False
 
 
 def set_winner(game: dict, user: User, session: Session):
+    """sets winner to the user game and opponent game
+    :param game: dict
+        user's game
+    :param user: User
+        current user
+    :param session: Session
+    """
     games = get_redis_table(GAME)
     opponent = get_user_by_id(uid=game['opponent_id'], session=session)
     opponent_game = find_game(user=opponent, games=games)

@@ -31,7 +31,6 @@ def user_adding(user: User, queue: list,
     :param session: Session
     :return: dict
     """
-    #create_session(table_name=GAME)
     while True:
         game = get_redis_table(GAME)
         general_queue = get_redis_table(QUEUE)
@@ -119,6 +118,16 @@ def make_try(answer: str, user: User, session: Session):
 
 
 def successful_try(user: User, task: Task, session: Session):
+    """ deletes user from game and gives
+        scores to user. User only when user
+        gave right answer!
+        :param user: User
+            current user
+        :param task: Task
+            task for which answer was given
+        :param session: Session
+
+    """
     leave_game(user=user, session=session)
     user.scores += task.scores
     scores = list(ranks.keys())
