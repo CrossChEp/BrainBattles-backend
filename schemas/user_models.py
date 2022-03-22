@@ -23,7 +23,6 @@ class UserModel(BaseModel):
     name: Optional[str]
     surname: Optional[str]
     password: Optional[str]
-    avatar: Optional[str]
 
     class Config:
         orm_mode = True

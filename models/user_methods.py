@@ -32,9 +32,9 @@ def user_add(user: UserModel, session: Session):
         salt=bcrypt.gensalt()
     )
     with open('store/user_image.jpeg', 'rb') as image:
-        user.avatar = base64.encodebytes(image.read()).hex()
+        avatar = base64.encodebytes(image.read()).hex()
     with open(f'static/{user.nickname}.jpeg', 'wb') as pfp:
-        image = decode_image(user.avatar)
+        image = decode_image(avatar)
         pfp.write(image)
     new_user = User(**user.dict())
     new_user.scores = 0
@@ -104,7 +104,7 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
             )
         new_user[key] = value
     req.update(new_user)
-    if user.avatar is not None:
+    if update_data.avatar is not None:
         with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
             pfp = decode_image(user.avatar)
             img.write(pfp)
