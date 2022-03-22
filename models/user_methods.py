@@ -94,7 +94,12 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
 
     req: Query = session.query(User).filter_by(id=user.id)
     new_user = {}
-    for key, value in update_data.dict().items():
+    if update_data.avatar is None:
+        user_without_avatar = skip_json_key(json=update_data.dict(), key='avatar')
+    else:
+        user_without_avatar = update_data.dict()
+
+    for key, value in user_without_avatar.items():
         if value is None:
             pass
         if key == 'password':
@@ -106,6 +111,12 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     req.update(new_user)
     if update_data.avatar is not None:
         with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
-            pfp = decode_image(user.avatar)
+            pfp = decode_image(update_data.avatar)
             img.write(pfp)
     session.commit()
+
+
+def skip_json_key(json: dict, key) -> dict:
+    json.pop(key)
+    return json
+
