@@ -1,1 +1,1 @@
-from middlewares.redis_sessions import create_session
+from middlewares.redis_sessions import get_redis_table

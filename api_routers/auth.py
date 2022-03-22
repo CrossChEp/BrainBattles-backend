@@ -12,7 +12,7 @@ from configs import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from schemas import Token, TokenData, UserGetModel
 from models import authenticate_user, get_user_by_id
 from store import get_session, User
-from models.auth_methods import create_access_token
+from models.auth.auth_methods import create_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

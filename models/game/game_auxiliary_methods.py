@@ -1,9 +1,13 @@
 import json
 import random
 
-from configs import redis, QUEUE
-from middlewares import create_session
-from schemas.api_models import GameModel
+from fastapi import HTTPException
+from sqlalchemy.orm import Session, create_session
+
+from configs import redis, QUEUE, GAME
+from middlewares import get_redis_table
+from models import get_user_by_id
+from schemas import GameModel
 from store import User, Task
 
 
@@ -57,9 +61,10 @@ def check_user_in_game(user: User, games: list):
     :return dict, False: dict, bool
 
     """
+
     for game in games:
         if game['user_id'] == user.id:
-            queue = create_session(QUEUE)
+            queue = get_redis_table(QUEUE)
             user_queue_place = check_user_in_queue(user, queue)
             if queue and user_queue_place:
                 queue.pop(queue.index(user_queue_place))
@@ -115,11 +120,62 @@ def adding_user_to_game(user: User, opponent: dict, random_task: Task):
                                     opponent_id=opponent['user_id'], task=random_task)
     opponent_game = generate_game_model(user_id=opponent['user_id'],
                                         opponent_id=user.id, task=random_task)
-    games = json.loads(redis.get('game'))
+    games = get_redis_table(GAME)
     games.append(user_game.dict())
     games.append(opponent_game.dict())
     redis.set('game', json.dumps(games))
-    queue = json.loads(redis.get('queue'))
+    queue = get_redis_table(QUEUE)
     queue = delete_from_queue(queue=queue, user_model=user_game)
     redis.set('queue', json.dumps(queue))
     return user_game
+
+
+def winner_exists(game: dict):
+    """ checks if winner already exists in game
+    :param game: dict
+    :return: bool
+    """
+    if game['winner']:
+        return True
+    return False
+
+
+def set_winner(game: dict, user: User, session: Session):
+    """sets winner to the user game and opponent game
+    :param game: dict
+        user's game
+    :param user: User
+        current user
+    :param session: Session
+    """
+    games = get_redis_table(GAME)
+    opponent = get_user_by_id(uid=game['opponent_id'], session=session)
+    opponent_game = find_game(user=opponent, games=games)
+    opponent_game['winner'] = user.id
+    game['winner'] = user.id
+    for special_game in games:
+        if special_game == game:
+            special_game = game
+        elif special_game == opponent_game:
+            special_game = opponent_game
+
+    redis.set(GAME, json.dumps(games))
+
+
+def winner_check(user: User) -> bool:
+    """ checks if user winner or
+        has the opponent already won
+    :param user: User
+        current user
+    :return: bool
+    """
+
+    games = get_redis_table(GAME)
+    game = find_game(user=user, games=games)
+    if not game:
+        raise HTTPException(status_code=403, detail='User not in game')
+    if winner_exists(game):
+        if game['winner'] != user.id:
+            return True
+    return False
+

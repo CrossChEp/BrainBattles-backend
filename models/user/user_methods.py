@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.image_methods import decode_image
-from schemas import UserModel, UserGetModel
-from schemas.api_models import UserUpdate
+from models.user.user_auxilary_methods import check_forbidden_nickname, skip_json_key, check_avatar_availability, \
+    hash_password, create_pfp
+from schemas import UserModel, UserGetModel, UserUpdate
 from store.db_model import User
 
 
@@ -33,9 +34,9 @@ def user_add(user: UserModel, session: Session):
         salt=bcrypt.gensalt()
     )
     with open('store/user_image.jpeg', 'rb') as image:
-        user.avatar = base64.encodebytes(image.read()).hex()
+        avatar = base64.encodebytes(image.read()).hex()
     with open(f'static/{user.nickname}.jpeg', 'wb') as pfp:
-        image = decode_image(user.avatar)
+        image = decode_image(avatar)
         pfp.write(image)
     new_user = User(**user.dict())
     new_user.scores = 0
@@ -87,26 +88,15 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     :param session: Session
     :return: None
     """
-    try:
-        if user.nickname.lower() == 'con':
-            raise HTTPException(status_code=406, detail='user with nickname "con" are not allowed')
-    except AttributeError:
-        pass
+    check_forbidden_nickname(nickname=update_data.nickname)
 
     req: Query = session.query(User).filter_by(id=user.id)
-    new_user = {}
-    for key, value in update_data.dict().items():
-        if value is None:
-            pass
-        if key == 'password':
-            value = bcrypt.hashpw(
-                value.encode(),
-                bcrypt.gensalt()
-            )
-        new_user[key] = value
-    req.update(new_user)
-    if user.avatar is not None:
-        with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
-            pfp = decode_image(user.avatar)
-            img.write(pfp)
+    checked_user_data = check_avatar_availability(user_update_data=update_data)
+
+    if update_data.password:
+        checked_user_data.password = hash_password(password=checked_user_data.password)
+    req.update(checked_user_data.dict())
+
+    if update_data.avatar is not None:
+        create_pfp(avatar=update_data.avatar, nickname=checked_user_data.nickname)
     session.commit()
