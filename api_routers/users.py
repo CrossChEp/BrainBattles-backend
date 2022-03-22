@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
 from schemas import UserModel
-from schemas.api_models import UserUpdate
+from schemas import UserUpdate
 from models import users_get, user_add, user_delete, user_update
 from store import get_session, User
 

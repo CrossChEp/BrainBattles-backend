@@ -1,4 +1,4 @@
-from schemas.api_models import GameModel
+from schemas import GameModel
 
 
 def delete_from_game(user_model: GameModel, game: list):

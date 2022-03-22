@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, create_session
 from configs import redis, QUEUE, GAME
 from middlewares import get_redis_table
 from models import get_user_by_id
-from schemas.api_models import GameModel
+from schemas import GameModel
 from store import User, Task
 
 

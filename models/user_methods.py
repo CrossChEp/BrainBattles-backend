@@ -6,8 +6,7 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.image_methods import decode_image
-from schemas import UserModel, UserGetModel
-from schemas.api_models import UserUpdate
+from schemas import UserModel, UserGetModel, UserUpdate
 from store.db_model import User
 
 
