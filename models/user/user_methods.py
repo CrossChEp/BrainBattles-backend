@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.image_methods import decode_image
+from models.user.user_auxilary_methods import check_forbidden_nickname, skip_json_key, check_avatar_availability, \
+    hash_password
 from schemas import UserModel, UserGetModel, UserUpdate
 from store.db_model import User
 
@@ -86,37 +88,18 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     :param session: Session
     :return: None
     """
-    try:
-        if user.nickname.lower() == 'con':
-            raise HTTPException(status_code=406, detail='user with nickname "con" are not allowed')
-    except AttributeError:
-        pass
+    check_forbidden_nickname(nickname=update_data.nickname)
 
     req: Query = session.query(User).filter_by(id=user.id)
-    new_user = {}
-    if update_data.avatar is None:
-        user_without_avatar = skip_json_key(json=update_data.dict(), key='avatar')
-    else:
-        user_without_avatar = update_data.dict()
+    checked_user_data = check_avatar_availability(user_update_data=update_data)
 
-    for key, value in user_without_avatar.items():
-        if value is None:
-            pass
-        if key == 'password':
-            value = bcrypt.hashpw(
-                value.encode(),
-                bcrypt.gensalt()
-            )
-        new_user[key] = value
-    req.update(new_user)
+    if update_data.password:
+        checked_user_data.password = hash_password(password=checked_user_data.password)
+    req.update(checked_user_data.dict())
+
     if update_data.avatar is not None:
         with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
             pfp = decode_image(update_data.avatar)
             img.write(pfp)
+
     session.commit()
-
-
-def skip_json_key(json: dict, key) -> dict:
-    json.pop(key)
-    return json
-

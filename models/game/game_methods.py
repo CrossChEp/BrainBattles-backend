@@ -16,8 +16,8 @@ from models.game.game_adding_task_methods import filter_task_by_rank
 from models.game.game_auxiliary_methods import check_user_in_game, \
     get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue, winner_exists, set_winner
 from models.game.game_deleting_methods import delete_from_game
-from models.matchmaking_middlewares import search_subject
-from models.tasks_methods import get_random_task
+from models.matchmaking.matchmaking_middlewares import search_subject
+from models.tasks.tasks_methods import get_random_task
 from store import User, Task
 
 
