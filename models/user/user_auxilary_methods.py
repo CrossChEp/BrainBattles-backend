@@ -1,6 +1,7 @@
 import bcrypt
 from fastapi import HTTPException
 
+from models.image_methods import decode_image
 from schemas import UserUpdate, UserModel
 
 FORBIDDEN_NICKNAMES = [
@@ -68,3 +69,8 @@ def hash_password(password: str):
     )
     return hashed_password
 
+
+def create_pfp(avatar, nickname: str):
+    with open(f'static/{nickname}.jpeg', 'wb') as img:
+        pfp = decode_image(avatar)
+        img.write(pfp)

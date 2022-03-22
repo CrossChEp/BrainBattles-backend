@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from configs import ranks
 from models.image_methods import decode_image
 from models.user.user_auxilary_methods import check_forbidden_nickname, skip_json_key, check_avatar_availability, \
-    hash_password
+    hash_password, create_pfp
 from schemas import UserModel, UserGetModel, UserUpdate
 from store.db_model import User
 
@@ -98,8 +98,5 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     req.update(checked_user_data.dict())
 
     if update_data.avatar is not None:
-        with open(f'/static/{req.first().nickname}.jpeg', 'wb') as img:
-            pfp = decode_image(update_data.avatar)
-            img.write(pfp)
-
+        create_pfp(avatar=update_data.avatar, nickname=checked_user_data.nickname)
     session.commit()
