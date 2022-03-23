@@ -30,11 +30,7 @@ def user_add(user: UserModel, session: Session):
     """
     user.password = hash_password(password=user.password)
 
-    # with open('store/user_image.jpeg', 'rb') as image:
-    #     avatar = base64.encodebytes(image.read()).hex()
-
     avatar = create_default_image()
-
     create_pfp(avatar=avatar, nickname=user.nickname)
 
     new_user = User(**user.dict())
