@@ -41,4 +41,5 @@ from models.user.user_methods import get_user, user_update, user_add, user_delet
 from models.matchmaking.matchmaking_methods import adding_to_staging, delete_from_staging
 from models.game.game_methods import add_to_game, leave_game, make_try
 from models.game.game_auxiliary_methods import winner_check
+from models.images.image_methods import decode_image, encode_image
 

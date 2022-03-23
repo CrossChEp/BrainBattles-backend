@@ -1,7 +1,7 @@
 import bcrypt
 from fastapi import HTTPException
 
-from models.image_methods import decode_image
+from models.images.image_methods import decode_image
 from schemas import UserUpdate, UserModel
 
 FORBIDDEN_NICKNAMES = [

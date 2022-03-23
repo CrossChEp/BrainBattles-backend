@@ -1,14 +1,13 @@
 import base64
 
-import bcrypt
-from fastapi import Query, HTTPException
+from fastapi import Query
 from sqlalchemy.orm import Session
 
 from configs import ranks
-from models.image_methods import decode_image
-from models.user.user_auxilary_methods import check_forbidden_nickname, skip_json_key, check_avatar_availability, \
+from models.images.image_methods import decode_image, create_default_image
+from models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
     hash_password, create_pfp
-from schemas import UserModel, UserGetModel, UserUpdate
+from schemas import UserModel, UserUpdate
 from store.db_model import User
 
 
@@ -29,15 +28,15 @@ def user_add(user: UserModel, session: Session):
     :param session: Session
     :return: None
     """
-    user.password = bcrypt.hashpw(
-        user.password.encode(),
-        salt=bcrypt.gensalt()
-    )
-    with open('store/user_image.jpeg', 'rb') as image:
-        avatar = base64.encodebytes(image.read()).hex()
-    with open(f'static/{user.nickname}.jpeg', 'wb') as pfp:
-        image = decode_image(avatar)
-        pfp.write(image)
+    user.password = hash_password(password=user.password)
+
+    # with open('store/user_image.jpeg', 'rb') as image:
+    #     avatar = base64.encodebytes(image.read()).hex()
+
+    avatar = create_default_image()
+
+    create_pfp(avatar=avatar, nickname=user.nickname)
+
     new_user = User(**user.dict())
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
