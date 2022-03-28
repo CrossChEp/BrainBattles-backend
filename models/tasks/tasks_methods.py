@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.game.game_adding_rank_methods import add_ranks_list
+from models.tasks import generate_new_task
 from schemas import TaskModel
 from store import Task, User
 
@@ -34,10 +35,8 @@ def task_add(task: TaskModel, user: User, session: Session):
     rank_list = add_ranks_list(ranks)
     if task.rank not in rank_list:
         raise HTTPException(status_code=400, detail='Wrong rank')
-    new_task = Task(**task.dict())
-    user.tasks.append(new_task)
-    session.add(new_task)
-    session.commit()
+
+    generate_new_task(task_model=task, session=session, user=user)
 
 
 def tasks_get(session: Session):
