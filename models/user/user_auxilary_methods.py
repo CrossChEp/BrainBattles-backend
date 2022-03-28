@@ -1,8 +1,13 @@
+"""Module for methods that used in user_methods module"""
+
 import bcrypt
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 
+from configs import ranks
 from models.images.image_methods import decode_image
 from schemas import UserUpdate, UserModel
+from store import User
 
 FORBIDDEN_NICKNAMES = [
     'con'
@@ -10,6 +15,12 @@ FORBIDDEN_NICKNAMES = [
 
 
 def generate_user_model(user_json: dict) -> UserModel:
+    """ generates user's model `UserModel` using user's json
+
+    :param user_json: dict
+        (user's json)
+    :return: UserModel
+    """
     return UserModel(**user_json)
 
 
@@ -70,7 +81,43 @@ def hash_password(password: str):
     return hashed_password
 
 
-def create_pfp(avatar, nickname: str):
+def create_pfp(avatar, nickname: str) -> None:
+    """ creates pfp to user
+    :param avatar: str
+        (user's future avatar)
+    :param nickname: str
+        (user's nickname)
+    :return: None
+    """
     with open(f'static/{nickname}.jpeg', 'wb') as img:
         pfp = decode_image(avatar)
         img.write(pfp)
+
+
+def is_user_exists(nickname: str, session: Session):
+    """checks if user with such nickname exists
+
+    :param nickname: str
+        (user nickname)
+    :param session: Session
+    """
+
+    user = session.query(User).filter_by(nickname=nickname).all()
+    if user:
+        raise HTTPException(status_code=403, detail='user with such nickname already exists')
+
+
+def generate_new_user(user_model: UserModel, session: Session) -> None:
+    """generates new user and adds him to database
+
+    :param user_model: UserModel
+        (user's model)
+    :param session: Session
+    :return: None
+    """
+
+    new_user = User(**user_model.dict())
+    new_user.scores = 0
+    new_user.rank = ranks[new_user.scores]
+    session.add(new_user)
+    session.commit()

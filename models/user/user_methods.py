@@ -1,12 +1,10 @@
-import base64
+"""Module for users' database methods"""
 
 from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
-
-from configs import ranks
-from models.images.image_methods import decode_image, create_default_image
+from models.images.image_methods import create_default_image
 from models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
-    hash_password, create_pfp
+    hash_password, create_pfp, is_user_exists, generate_new_user
 from schemas import UserModel, UserUpdate
 from store.db_model import User
 
@@ -21,7 +19,7 @@ def users_get(session: Session):
     return users
 
 
-def user_add(user: UserModel, session: Session):
+def user_add(user: UserModel, session: Session) -> None:
     """
     adds user to database
     :param user: UserModel
@@ -33,14 +31,9 @@ def user_add(user: UserModel, session: Session):
     avatar = create_default_image()
     create_pfp(avatar=avatar, nickname=user.nickname)
 
-    is_nickname_exists = session.query(User).filter_by(nickname=user.nickname).all()
-    if is_nickname_exists:
-        raise HTTPException(status_code=403, detail='user with such nickname already exists')
-    new_user = User(**user.dict())
-    new_user.scores = 0
-    new_user.rank = ranks[new_user.scores]
-    session.add(new_user)
-    session.commit()
+    is_user_exists(nickname=user.nickname, session=session)
+
+    generate_new_user(user_model=user, session=session)
 
 
 def user_delete(user: User, session: Session):
@@ -56,6 +49,14 @@ def user_delete(user: User, session: Session):
 
 
 def get_user_by_id(uid: int, session: Session) -> User:
+    """ gets user by user id
+
+    :param uid: int
+        (user id)
+    :param session: Session
+    :return: User
+    """
+
     user = session.query(User).filter_by(id=uid).first()
     return user
 
