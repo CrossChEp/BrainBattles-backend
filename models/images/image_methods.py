@@ -12,3 +12,10 @@ def decode_image(hex_digit: str) -> bytes:
         raise ValueError("String is not a valid hex-string")
 
     return base64.decodebytes(b''.fromhex(hex_digit))
+
+
+def create_default_image():
+    with open('store/user_image.jpeg', 'rb') as image:
+        avatar = base64.encodebytes(image.read()).hex()
+    return avatar
+
