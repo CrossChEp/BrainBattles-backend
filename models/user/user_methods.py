@@ -89,9 +89,7 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     """
 
     if update_data.nickname:
-        is_nickname_exists = session.query(User).filter_by(nickname=update_data.nickname).all()
-        if is_nickname_exists:
-            raise HTTPException(status_code=403, detail='user with such nickname already exists')
+        is_user_exists(nickname=update_data.nickname, session=session)
 
     check_forbidden_nickname(nickname=update_data.nickname)
 
