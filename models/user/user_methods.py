@@ -1,6 +1,6 @@
 import base64
 
-from fastapi import Query
+from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 
 from configs import ranks
@@ -33,6 +33,9 @@ def user_add(user: UserModel, session: Session):
     avatar = create_default_image()
     create_pfp(avatar=avatar, nickname=user.nickname)
 
+    is_nickname_exists = session.query(User).filter_by(nickname=user.nickname).all()
+    if is_nickname_exists:
+        raise HTTPException(status_code=403, detail='user with such nickname already exists')
     new_user = User(**user.dict())
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
@@ -83,6 +86,12 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     :param session: Session
     :return: None
     """
+
+    if update_data.nickname:
+        is_nickname_exists = session.query(User).filter_by(nickname=update_data.nickname).all()
+        if is_nickname_exists:
+            raise HTTPException(status_code=403, detail='user with such nickname already exists')
+
     check_forbidden_nickname(nickname=update_data.nickname)
 
     req: Query = session.query(User).filter_by(id=user.id)
