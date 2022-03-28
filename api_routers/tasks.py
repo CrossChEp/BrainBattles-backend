@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
-from schemas import TaskModel
+from schemas import TaskModel, TaskUpdateModel
 from store import get_session, User
-from models import task_add, tasks_get, task_get, task_delete, user_tasks_get
+from models import task_add, tasks_get, task_get, task_delete, user_tasks_get, update_task_data
 
 tasks_router = APIRouter()
 
@@ -71,3 +71,16 @@ def get_user_tasks(user: User = Depends(get_current_user),
     """
 
     return user_tasks_get(user=user, session=session)
+
+
+@tasks_router.put('/api/task')
+def update_task(task_id: int, task_model: TaskUpdateModel,
+                user: User = Depends(get_current_user),
+                session: Session = Depends(get_session)):
+
+    return update_task_data(
+        task_id=task_id,
+        task_model=task_model,
+        user=user,
+        session=session
+    )

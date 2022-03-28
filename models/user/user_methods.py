@@ -4,9 +4,10 @@ from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 from models.images.image_methods import create_default_image
 from models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
-    hash_password, create_pfp, is_user_exists, generate_new_user, model_without_nones
+    hash_password, create_pfp, is_user_exists, generate_new_user
 from schemas import UserModel, UserUpdate
 from store.db_model import User
+from models.general_methods import model_without_nones
 
 
 def users_get(session: Session):

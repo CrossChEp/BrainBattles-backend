@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -27,3 +29,14 @@ class TaskModel(BaseModel):
     class Config:
         orm_mode = True
 
+
+class TaskUpdateModel(BaseModel):
+    name: Optional[str]
+    subject: Optional[str]
+    content: Optional[str]
+    right_answer: Optional[str]
+    scores: Optional[int]
+    rank: Optional[str]
+
+    class Config:
+        orm_mode = True

@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.game.game_adding_rank_methods import add_ranks_list
-from models.tasks import generate_new_task
-from schemas import TaskModel
+from models.general_methods import model_without_nones
+from models.tasks import generate_new_task, check_task_availability
+from schemas import TaskModel, TaskUpdateModel
 from store import Task, User
 
 
@@ -82,3 +83,27 @@ def user_tasks_get(user: User, session: Session):
     :return: Json
     """
     return user.tasks
+
+
+def update_task_data(task_id: int, task_model: TaskUpdateModel,
+                       session: Session, user: User) -> None:
+    """ updates user's task using task's id
+
+    :param task_id: int
+        (task's id)
+    :param task_model: TaskUpdateModel
+        (new task's data)
+    :param session: Session
+    :param user: User
+        (current user)
+    :return: None
+    """
+
+    task = session.query(Task).filter_by(id=task_id)
+
+    check_task_availability(user=user, task=task)
+
+    clear_task_model = model_without_nones(model=task_model.dict())
+    task.update(clear_task_model)
+    session.commit()
+
