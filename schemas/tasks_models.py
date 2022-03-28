@@ -35,7 +35,7 @@ class TaskUpdateModel(BaseModel):
     subject: Optional[str]
     content: Optional[str]
     right_answer: Optional[str]
-    scores: Optional[str]
+    scores: Optional[int]
     rank: Optional[str]
 
     class Config:
