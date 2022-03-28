@@ -122,3 +122,12 @@ def generate_new_user(user_model: UserModel, session: Session) -> None:
     session.add(new_user)
     session.commit()
 
+
+def model_without_nones(model: dict) -> dict:
+    output_json = {}
+    for key, value in model.items():
+        if value is None:
+            pass
+        else:
+            output_json[key] = value
+    return output_json
