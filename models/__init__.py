@@ -33,7 +33,7 @@ Functions:
 """
 
 
-from models.tasks.tasks_methods import task_add, tasks_get, task_get, task_delete, user_tasks_get
+from models.tasks.tasks_methods import task_add, tasks_get, task_get, task_delete, user_tasks_get, update_task_data
 from models.auth.auth_methods import authenticate_user, create_access_token, get_password,\
     verify_password_hash
 from models.user.user_methods import get_user, user_update, user_add, user_delete, users_get,\

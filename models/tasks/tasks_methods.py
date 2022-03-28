@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 
 from configs import ranks
 from models.game.game_adding_rank_methods import add_ranks_list
+from models.general_methods import model_without_nones
 from models.tasks import generate_new_task
-from schemas import TaskModel
+from schemas import TaskModel, TaskUpdateModel
 from store import Task, User
 
 
@@ -82,3 +83,17 @@ def user_tasks_get(user: User, session: Session):
     :return: Json
     """
     return user.tasks
+
+
+def update_task_data(task_id: int, task_model: TaskUpdateModel,
+                       session: Session, user: User) -> None:
+    task = session.query(Task).filter_by(id=task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail='No tasks were found')
+    if task not in user.tasks:
+        raise HTTPException(status_code=403, detail="You don't have permission to update this task")
+
+    clear_task_model = model_without_nones(model=task_model.dict())
+    task.update(**clear_task_model)
+    session.commit()
+
