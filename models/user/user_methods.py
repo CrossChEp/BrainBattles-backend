@@ -29,6 +29,10 @@ def user_add(user: UserModel, session: Session):
     :param session: Session
     :return: None
     """
+    is_nickname_exists = session.query(User).filter_by(nickname=user.nickname).all()
+    if is_nickname_exists:
+        raise HTTPException(status_code=403, detail='user with such nickname already exists')
+
     user.password = bcrypt.hashpw(
         user.password.encode(),
         salt=bcrypt.gensalt()
@@ -88,6 +92,12 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     :param session: Session
     :return: None
     """
+
+    if update_data.nickname:
+        is_nickname_exists = session.query(User).filter_by(nickname=update_data.nickname).all()
+        if is_nickname_exists:
+            raise HTTPException(status_code=403, detail='user with such nickname already exists')
+
     check_forbidden_nickname(nickname=update_data.nickname)
 
     req: Query = session.query(User).filter_by(id=user.id)
