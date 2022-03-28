@@ -128,5 +128,6 @@ def model_without_nones(model: dict) -> dict:
     for key, value in model.items():
         if value is None:
             pass
-        output_json[key] = value
+        else:
+            output_json[key] = value
     return output_json
