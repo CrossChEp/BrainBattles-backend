@@ -4,7 +4,7 @@ from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 from models.images.image_methods import create_default_image
 from models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
-    hash_password, create_pfp, is_user_exists, generate_new_user
+    hash_password, create_pfp, is_user_exists, generate_new_user, model_without_nones
 from schemas import UserModel, UserUpdate
 from store.db_model import User
 
@@ -68,12 +68,7 @@ def get_user(user: UserModel, session: Session):
     :param session: Session
     :return: User
     """
-    new_user = {}
-    for key, value in user.dict().items():
-        if value is None:
-            pass
-        else:
-            new_user[key] = value
+    new_user = model_without_nones(user.dict())
 
     user = session.query(User).filter_by(**new_user).first()
     return user
