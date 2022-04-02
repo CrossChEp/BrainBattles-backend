@@ -32,6 +32,7 @@ class UserGetModel(UserModel):
     id: int
     scores: int
     rank: str
+    wins: int
 
     class Config:
         orm_mode = True

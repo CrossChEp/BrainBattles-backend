@@ -119,5 +119,6 @@ def generate_new_user(user_model: UserModel, session: Session) -> None:
     new_user = User(**user_model.dict())
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
+    new_user.wins = 0
     session.add(new_user)
     session.commit()

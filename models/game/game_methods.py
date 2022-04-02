@@ -129,6 +129,7 @@ def successful_try(user: User, task: Task, session: Session):
 
     """
     leave_game(user=user, session=session)
+    user.wins += 1
     user.scores += task.scores
     scores = list(ranks.keys())
     set_user_rank(scores=scores, user=user)
