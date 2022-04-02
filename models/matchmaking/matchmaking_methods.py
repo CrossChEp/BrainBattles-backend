@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 from middlewares import get_redis_table
-from models.matchmaking.matchmaking_middlewares import generate_queue_model, search_subject, delete_user
+from models.matchmaking.matchmaking_auxilary_methods import generate_queue_model, search_subject, delete_user
 from store import User
 import json
 from configs import redis, QUEUE
