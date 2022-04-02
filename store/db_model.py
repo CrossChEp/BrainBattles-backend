@@ -14,6 +14,7 @@ class User(base):
     password = Column(String)
     scores = Column(Float)
     rank = Column(String)
+    wins = Column(Integer)
     tasks = relationship('Task', backref='user')
 
 

@@ -4,7 +4,7 @@ import random
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, create_session
 
-from configs import redis, QUEUE, GAME
+from configs import redis, QUEUE, GAME, ranks
 from middlewares import get_redis_table
 from models import get_user_by_id
 from schemas import GameModel
@@ -179,3 +179,20 @@ def winner_check(user: User) -> bool:
             return True
     return False
 
+
+def set_user_rank(scores: list, user: User):
+    """Sets user rank that equal to his scores
+
+    :param scores: list
+        (all ranks' scores)
+    :param user: User
+    :return:
+    """
+    for index, score in enumerate(scores):
+        try:
+            if user.scores < scores[index + 1]:
+                new_rank = ranks[score]
+                user.rank = new_rank
+                break
+        except IndexError:
+            pass

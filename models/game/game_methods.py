@@ -14,9 +14,10 @@ from models.game.game_adding_rank_methods import filter_by_rank
 from models.game.game_adding_subject_methods import filtered_users
 from models.game.game_adding_task_methods import filter_task_by_rank
 from models.game.game_auxiliary_methods import check_user_in_game, \
-    get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue, winner_exists, set_winner
+    get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue, winner_exists, \
+    set_winner, set_user_rank
 from models.game.game_deleting_methods import delete_from_game
-from models.matchmaking.matchmaking_middlewares import search_subject
+from models.matchmaking.matchmaking_auxilary_methods import search_subject
 from models.tasks.tasks_methods import get_random_task
 from store import User, Task
 
@@ -70,8 +71,6 @@ def add_to_game(user: User, session: Session):
     subject = search_subject(queue=queue, user_id=user.id)
     if not subject:
         raise HTTPException(status_code=403, detail='User not in queue')
-    # opponents = filtered_users(subject=subject, queue=queue)
-    # opponents = filter_by_rank(users=opponents, active_user=user)
     task = user_adding(user=user, queue=queue, subject=subject, session=session)
     return task
 
@@ -130,14 +129,8 @@ def successful_try(user: User, task: Task, session: Session):
 
     """
     leave_game(user=user, session=session)
+    user.wins += 1
     user.scores += task.scores
     scores = list(ranks.keys())
-    for index, score in enumerate(scores):
-        try:
-            if user.scores < scores[index + 1]:
-                new_rank = ranks[score]
-                user.rank = new_rank
-                break
-        except IndexError:
-            pass
+    set_user_rank(scores=scores, user=user)
     session.commit()
