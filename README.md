@@ -1,5 +1,5 @@
 # BrainBattles.api 
-Valpha 1.0
+Valpha 1.0.1
 
 
     This api was made for BrainBattles backend
