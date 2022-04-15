@@ -61,6 +61,6 @@ def update_user(update_data: UserUpdate, user: User = Depends(get_current_user),
     return user_update(user=user, session=session, update_data=update_data)
 
 
-@users_router.get('/api/user', response_model=UserGetModel)
+@users_router.get('/api/user')
 def get_user(id: int, session: Session = Depends(get_session)):
     return get_user_by_id(uid=id, session=session)
