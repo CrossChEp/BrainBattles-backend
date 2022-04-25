@@ -33,6 +33,7 @@ def user_adding(user: User, queue: list,
     :return: dict
     """
     get_redis_table(GAME)
+    get_redis_table(QUEUE)
     while True:
         game = get_redis_table(GAME)
         general_queue = get_redis_table(QUEUE)

@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from api_routers.auth import get_current_user
-from schemas import UserModel
+from schemas import UserModel, UserGetModel
 from schemas import UserUpdate
-from models import users_get, user_add, user_delete, user_update
+from models import users_get, user_add, user_delete, user_update, get_user_by_id
 from store import get_session, User
 
 users_router = APIRouter()
@@ -59,3 +59,8 @@ def update_user(update_data: UserUpdate, user: User = Depends(get_current_user),
     """
 
     return user_update(user=user, session=session, update_data=update_data)
+
+
+@users_router.get('/api/user')
+def get_user(id: int, session: Session = Depends(get_session)):
+    return get_user_by_id(uid=id, session=session)
