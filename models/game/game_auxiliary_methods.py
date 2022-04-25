@@ -151,7 +151,8 @@ def set_winner(game: dict, user: User, session: Session):
     games = get_redis_table(GAME)
     opponent = get_user_by_id(uid=game['opponent_id'], session=session)
     opponent_game = find_game(user=opponent, games=games)
-    opponent_game['winner'] = user.id
+    if opponent_game:
+        opponent_game['winner'] = user.id
     game['winner'] = user.id
     for special_game in games:
         if special_game == game:
