@@ -14,7 +14,7 @@ from models import authenticate_user, get_user_by_id
 from store import get_session, User
 from models.auth.auth_methods import create_access_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 
 auth_router = APIRouter()
 
@@ -40,7 +40,7 @@ def get_current_user(session: Session = Depends(get_session), token: str = Depen
     return user
 
 
-@auth_router.post('/token', response_model=Token)
+@auth_router.post('/api/token', response_model=Token)
 def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(),
                     session: Session = Depends(get_session)):
     user = authenticate_user(session=session, username=form_data.username,
@@ -56,6 +56,6 @@ def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(),
     return Token(access_token=access_token, token_type='bearer')
 
 
-@auth_router.get('/user/me', response_model=UserGetModel)
+@auth_router.get('/api/read/me', response_model=UserGetModel)
 def read_user_me(current_user: User = Depends(get_current_user)):
     return current_user
