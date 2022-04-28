@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount('/static', StaticFiles(directory='static'), name='static')
+app.mount('/api/static', StaticFiles(directory='static'), name='/api/static')
 app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(tasks_router)
