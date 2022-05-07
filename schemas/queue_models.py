@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class QueueModel(BaseModel):
     user_id: int
-    subject: str
+    subjects: list
     rank: str
 
     class Config:

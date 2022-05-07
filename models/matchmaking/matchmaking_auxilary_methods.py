@@ -2,34 +2,34 @@ from schemas import QueueModel
 from store import User
 
 
-def generate_queue_model(user: User, subject: str) -> QueueModel:
+def generate_queue_model(user: User, subjects: list) -> QueueModel:
     """ generates QueueModule using User(user's database cell)
         and subject
     :param user: User
-    :param subject: str
+    :param subjects: list
     :return user_json: QueueModel
 
     """
     user_json = QueueModel(
         user_id=user.id,
-        subject=subject,
+        subjects=subjects,
         rank=user.rank
     )
     return user_json
 
 
-def search_subject(queue: list, user_id: int):
-    """ finds subject from
+def search_subjects(queue: list, user_id: int) -> list:
+    """ finds subjects from
         user's queue place
     :param queue: list
     :param user_id: int
     :return subject: str
     """
-    subject = str()
+    subjects = []
     for user in queue:
         if user['user_id'] == user_id:
-            subject = user['subject']
-    return subject
+            subjects = user['subjects']
+    return subjects
 
 
 def delete_user(queue: list, user_model: QueueModel):

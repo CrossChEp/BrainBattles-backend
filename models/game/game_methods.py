@@ -11,24 +11,24 @@ from configs import ranks, QUEUE, GAME, redis
 from middlewares import get_redis_table
 from models import task_get
 from models.game.game_adding_rank_methods import filter_by_rank
-from models.game.game_adding_subject_methods import filtered_users
+from models.game.game_adding_subject_methods import filtered_users, get_game_subject
 from models.game.game_adding_task_methods import filter_task_by_rank
 from models.game.game_auxiliary_methods import check_user_in_game, \
     get_random_user, adding_user_to_game, find_game, generate_game_model, check_user_in_queue, winner_exists, \
     set_winner, set_user_rank
 from models.game.game_deleting_methods import delete_from_game
-from models.matchmaking.matchmaking_auxilary_methods import search_subject
+from models.matchmaking.matchmaking_auxilary_methods import search_subjects
 from models.tasks.tasks_methods import get_random_task
 from store import User, Task
 
 
 def user_adding(user: User, queue: list,
-                subject: str, session: Session):
+                subjects: list, session: Session):
     """
     adds user to database
     :param user: User
     :param queue: list
-    :param subject: str
+    :param subjects: list
     :param session: Session
     :return: dict
     """
@@ -43,13 +43,14 @@ def user_adding(user: User, queue: list,
             return checking
         if not checking_queue:
             raise HTTPException(status_code=403, detail='User not in queue')
-        opponents = filtered_users(subject=subject, queue=queue)
+        opponents = filtered_users(subjects=subjects, queue=queue)
         opponents = filter_by_rank(users=opponents, active_user=user)
         if not opponents:
             continue
         opponent = get_random_user(users=opponents)
         if not opponent:
             continue
+        subject = get_game_subject(user_subjects=subjects, opponent_subjects=opponent['subjects'])
         tasks = filter_task_by_rank(user=user, subject=subject, session=session)
         if not tasks:
             raise HTTPException(status_code=404, detail='No task with such subject')
@@ -69,10 +70,10 @@ def add_to_game(user: User, session: Session):
     """
     get_redis_table(table_name=QUEUE)
     queue = json.loads(redis.get(QUEUE))
-    subject = search_subject(queue=queue, user_id=user.id)
-    if not subject:
+    subjects = search_subjects(queue=queue, user_id=user.id)
+    if not subjects:
         raise HTTPException(status_code=403, detail='User not in queue')
-    task = user_adding(user=user, queue=queue, subject=subject, session=session)
+    task = user_adding(user=user, queue=queue, subjects=subjects, session=session)
     return task
 
 
