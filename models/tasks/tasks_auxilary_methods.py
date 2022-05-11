@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, Query
 
 from schemas import TaskModel
-from store import Task, User
+from store import Task, User, TaskModeration
 
 
 def generate_new_task(task_model: TaskModel, user: User,
@@ -17,6 +17,8 @@ def generate_new_task(task_model: TaskModel, user: User,
 
     task = Task(**task_model.dict())
     user.tasks.append(task)
+    moderated_task = TaskModeration()
+    task.is_moderated.append(moderated_task)
     session.add(task)
     session.commit()
 

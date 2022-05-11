@@ -28,3 +28,10 @@ class Task(base):
     scores = Column(Float)
     rank = Column(String)
     author = Column(Integer, ForeignKey('users.id'))
+    is_moderated = relationship('TaskModeration', backref='task', cascade='all, delete')
+
+
+class TaskModeration(base):
+    __tablename__ = 'tasks_moderation'
+    id = Column(Integer, primary_key=True)
+    task_id = Column(Integer, ForeignKey('tasks.id'))
