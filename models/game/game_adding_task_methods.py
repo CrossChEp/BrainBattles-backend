@@ -17,6 +17,6 @@ def filter_task_by_rank(user: User, subject: str, session: Session):
     tasks_list = add_ranks_list(ranks=ranks)
     filtered_tasks = []
     for task in db_tasks:
-        if tasks_list.index(task.rank) <= tasks_list.index(user.rank):
+        if tasks_list.index(task.rank) <= tasks_list.index(user.rank) and not task.is_moderated:
             filtered_tasks.append(task)
     return filtered_tasks
