@@ -24,9 +24,9 @@ for BrainBattles app
 ### 6. Run redis:
 
 * Linux(Ubuntu):
-    #### `redis-server start```
+    #### ```redis-server start```
 * Windows:
-    #### start redis-cli.exe
+    #### `start redis-cli.exe`
 
 ### 7. Run the api
 #### ```uvicorn run api:app```
