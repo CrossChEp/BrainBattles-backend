@@ -9,9 +9,10 @@ from starlette import status
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 from core.configs import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
+from core.middlewares.database_session import generate_session
 from core.schemas import Token, TokenData, UserGetModel
 from core.models import authenticate_user, get_user_by_id
-from core.store import get_session, User
+from core.store import User
 from core.models.auth.auth_methods import create_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
@@ -19,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 auth_router = APIRouter()
 
 
-def get_current_user(session: Session = Depends(get_session), token: str = Depends(oauth2_scheme)):
+def get_current_user(session: Session = Depends(generate_session), token: str = Depends(oauth2_scheme)):
     credetials_exception = HTTPException(
         status_code=HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -42,7 +43,7 @@ def get_current_user(session: Session = Depends(get_session), token: str = Depen
 
 @auth_router.post('/api/token', response_model=Token)
 def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(),
-                    session: Session = Depends(get_session)):
+                    session: Session = Depends(generate_session)):
     user = authenticate_user(session=session, username=form_data.username,
                              password=form_data.password)
     if not user:

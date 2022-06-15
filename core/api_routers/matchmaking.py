@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
 from core.models import adding_to_staging, delete_from_staging
-from core.store import User, get_session
+from core.store import User
 
 matchmaking_router = APIRouter()
 
