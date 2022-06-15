@@ -35,7 +35,7 @@ def get_current_user(session: Session = Depends(generate_session), token: str = 
     except JWTError:
         raise credetials_exception
 
-    user = get_user_by_id(uid=token_data.id, session=session)
+    user = get_user_by_id(user_id=token_data.id, session=session)
     if user is None:
         raise credetials_exception
     return user

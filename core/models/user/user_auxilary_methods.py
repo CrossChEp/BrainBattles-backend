@@ -1,4 +1,5 @@
 """Module for methods that used in user_methods module"""
+from typing import List
 
 import bcrypt
 from fastapi import HTTPException
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from core.configs import ranks
 from core.models.images.image_methods import decode_image
-from core.schemas import UserUpdate, UserModel
+from core.schemas import UserGetModel, UserRegisterModel, UserUpdateModel
 from core.store import User
 
 FORBIDDEN_NICKNAMES = [
@@ -14,14 +15,40 @@ FORBIDDEN_NICKNAMES = [
 ]
 
 
-def generate_user_model(user_json: dict) -> UserModel:
-    """ generates user's model `UserModel` using user's json
+# def generate_user_model(user_json: dict) -> UserModel:
+#     """ generates user's model `UserModel` using user's json
+#
+#     :param user_json: dict
+#         (user's json)
+#     :return: UserModel
+#     """
+#     return UserModel(**user_json)
 
-    :param user_json: dict
-        (user's json)
-    :return: UserModel
-    """
-    return UserModel(**user_json)
+
+def generate_user_get_model_for_many_users(users: List[User]) -> List[UserGetModel]:
+    user_get_models = []
+    for user in users:
+        user_get_model = generate_user_get_model(user)
+        user_get_models.append(user_get_model)
+    return user_get_models
+
+
+def generate_user_get_model(user: User) -> UserGetModel:
+    user_get_model = UserGetModel(
+        id=user.id,
+        nickname=user.nickname,
+        email=user.email,
+        name=user.name,
+        surname=user.surname,
+        organization=user.organization,
+        region=user.region,
+        contacts=user.contacts,
+        rank=user.rank,
+        wins=user.wins,
+        scores=user.scores,
+        games=user.games
+    )
+    return user_get_model
 
 
 def check_forbidden_nickname(nickname: str):
@@ -39,7 +66,7 @@ def check_forbidden_nickname(nickname: str):
         pass
 
 
-def check_avatar_availability(user_update_data: UserUpdate):
+def check_avatar_availability(user_update_data: UserUpdateModel):
     """ returns json without avatar if avatar
     doesn't exist or output json
 
@@ -50,8 +77,8 @@ def check_avatar_availability(user_update_data: UserUpdate):
     """
     if user_update_data.avatar is None:
         user_dict = skip_json_key(json=user_update_data.dict(), key='avatar')
-        return generate_user_model(user_json=user_dict)
-    return user_update_data
+        return user_dict
+    return user_update_data.dict()
 
 
 def skip_json_key(json: dict, key) -> dict:
@@ -107,18 +134,19 @@ def is_user_exists(nickname: str, session: Session):
         raise HTTPException(status_code=403, detail='user with such nickname already exists')
 
 
-def generate_new_user(user_model: UserModel, session: Session) -> None:
+def generate_new_user(user_model: UserRegisterModel, session: Session) -> None:
     """generates new user and adds him to database
 
-    :param user_model: UserModel
+    :param user_model: UserRegisterModel
         (user's model)
     :param session: Session
     :return: None
     """
-
-    new_user = User(**user_model.dict())
+    user_clear_model = skip_json_key(user_model.dict(), 'avatar')
+    new_user = User(**user_clear_model)
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
     new_user.wins = 0
+    new_user.games = 0
     session.add(new_user)
     session.commit()

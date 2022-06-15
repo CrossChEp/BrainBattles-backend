@@ -4,8 +4,8 @@ from fastapi import Query, HTTPException
 from sqlalchemy.orm import Session
 from core.models.images.image_methods import create_default_image
 from core.models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
-    hash_password, create_pfp, is_user_exists, generate_new_user
-from core.schemas import UserModel, UserUpdate
+    hash_password, create_pfp, is_user_exists, generate_new_user, generate_user_get_model_for_many_users
+from core.schemas import UserRegisterModel, UserUpdateModel, UserAbstractModel
 from core.store.db_model import User
 from core.models.general_methods import model_without_nones
 
@@ -17,10 +17,11 @@ def users_get(session: Session):
     :return: User
     """
     users = session.query(User).all()
-    return users
+    user_models = generate_user_get_model_for_many_users(users)
+    return user_models
 
 
-def user_add(user: UserModel, session: Session) -> None:
+def add_user_to_database(user: UserRegisterModel, session: Session) -> None:
     """
     adds user to database
     :param user: UserModel
@@ -37,7 +38,7 @@ def user_add(user: UserModel, session: Session) -> None:
     generate_new_user(user_model=user, session=session)
 
 
-def user_delete(user: User, session: Session):
+def delete_user_from_database(user: User, session: Session):
     """
     deletes user from database
     :param user: User
@@ -49,20 +50,20 @@ def user_delete(user: User, session: Session):
     session.commit()
 
 
-def get_user_by_id(uid: int, session: Session) -> User:
+def get_user_by_id(user_id: int, session: Session) -> User:
     """ gets user by user id
 
-    :param uid: int
+    :param user_id: int
         (user id)
     :param session: Session
     :return: User
     """
 
-    user = session.query(User).filter_by(id=uid).first()
+    user = session.query(User).filter_by(id=user_id).first()
     return user
 
 
-def get_user(user: UserModel, session: Session):
+def get_user(user: UserAbstractModel, session: Session):
     """
     gets concrete user
     :param user: UserModel
@@ -75,7 +76,7 @@ def get_user(user: UserModel, session: Session):
     return user
 
 
-def user_update(user: User, update_data: UserUpdate, session: Session):
+def update_user_data(user: User, update_data: UserUpdateModel, session: Session):
     """
     updates user in database
     :param user: User
@@ -90,11 +91,11 @@ def user_update(user: User, update_data: UserUpdate, session: Session):
     check_forbidden_nickname(nickname=update_data.nickname)
 
     req: Query = session.query(User).filter_by(id=user.id)
-    checked_user_data = check_avatar_availability(user_update_data=update_data)
 
     if update_data.password:
-        checked_user_data.password = hash_password(password=checked_user_data.password)
-    req.update(checked_user_data.dict())
+        update_data.password = hash_password(password=update_data.password)
+    checked_user_data = check_avatar_availability(user_update_data=update_data)
+    req.update(checked_user_data)
 
     if update_data.avatar is not None:
         create_pfp(avatar=update_data.avatar, nickname=checked_user_data.nickname)

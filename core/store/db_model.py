@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, JSON
 from sqlalchemy.orm import declarative_base, relationship
 
 base = declarative_base()
@@ -12,9 +12,13 @@ class User(base):
     name = Column(String)
     surname = Column(String)
     password = Column(String)
+    organization = Column(String)
+    region = Column(String)
+    contacts = Column(JSON)
     scores = Column(Float)
     rank = Column(String)
     wins = Column(Integer)
+    games = Column(Integer)
     tasks = relationship('Task', backref='user')
 
 

@@ -1,19 +1,19 @@
-import requests
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
 from core.middlewares.database_session import generate_session
-from core.schemas import UserModel, UserGetModel
-from core.schemas import UserUpdate
-from core.models import users_get, user_add, user_delete, user_update, get_user_by_id
+from core.models import users_get, add_user_to_database, delete_user_from_database, update_user_data, get_user_by_id
+from core.schemas import UserGetModel, UserRegisterModel, UserUpdateModel
 from core.store import User
 
 users_router = APIRouter()
 
 
 @users_router.get('/api/users')
-def get_users(session: Session = Depends(generate_session)):
+def get_all_users(session: Session = Depends(generate_session)) -> List[UserGetModel]:
     """ GET endpoint that gets all users from database
 
     :param session: Session
@@ -24,7 +24,7 @@ def get_users(session: Session = Depends(generate_session)):
 
 
 @users_router.post('/api/register')
-def add_user(user: UserModel, session: Session = Depends(generate_session)):
+def register_user(user: UserRegisterModel, session: Session = Depends(generate_session)):
     """ POST endpoint that adds user to database
 
     :param user: UserModel
@@ -32,7 +32,7 @@ def add_user(user: UserModel, session: Session = Depends(generate_session)):
     :return: None
     """
 
-    return user_add(user=user, session=session)
+    return add_user_to_database(user=user, session=session)
 
 
 @users_router.delete('/api/users')
@@ -45,11 +45,11 @@ def delete_user(user: User = Depends(get_current_user),
     :return: None
     """
 
-    return user_delete(user=user, session=session)
+    return delete_user_from_database(user=user, session=session)
 
 
 @users_router.put('/api/users')
-def update_user(update_data: UserUpdate, user: User = Depends(get_current_user),
+def update_user(update_data: UserUpdateModel, user: User = Depends(get_current_user),
                 session: Session = Depends(generate_session)):
     """PUT endpoint that updates user's data
 
@@ -59,9 +59,9 @@ def update_user(update_data: UserUpdate, user: User = Depends(get_current_user),
     :return: None
     """
 
-    return user_update(user=user, session=session, update_data=update_data)
+    return update_user_data(user=user, session=session, update_data=update_data)
 
 
-@users_router.get('/api/user')
-def get_user(id: int, session: Session = Depends(generate_session)):
-    return get_user_by_id(uid=id, session=session)
+@users_router.get('/api/user/{user_id}')
+def get_user(user_id: int, session: Session = Depends(generate_session)):
+    return get_user_by_id(user_id=user_id, session=session)

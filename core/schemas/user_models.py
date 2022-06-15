@@ -3,43 +3,44 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class UserModel(BaseModel):
-    """ Scheme of user
-
-        fields:
-        nickname: str
-            user's nickname
-        email: str
-            user's email
-        name: str
-            user's name
-        surname: str
-            user's surname
-        password: str
-            user's password
-    """
-    nickname: Optional[str]
-    email: Optional[str]
+class BaseUserModel(BaseModel):
+    nickname: str
+    email: str
     name: Optional[str]
     surname: Optional[str]
-    password: Optional[str]
 
     class Config:
         orm_mode = True
 
 
-class UserGetModel(UserModel):
-    id: int
-    scores: int
-    rank: str
-    wins: int
-
-    class Config:
-        orm_mode = True
-
-
-class UserUpdate(UserModel):
+class UserRegisterModel(BaseUserModel):
+    password: str
     avatar: Optional[str]
 
-    class Config:
-        orm_mode = True
+
+class UserGetModel(BaseUserModel):
+    id: int
+    organization: Optional[str]
+    region: Optional[str]
+    contacts: Optional[dict]
+    rank: Optional[str]
+    wins: Optional[int]
+    scores: Optional[int]
+    games: Optional[int]
+
+
+class UserUpdateModel(BaseModel):
+    nickname: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
+    name: Optional[str]
+    surname: Optional[str]
+    organization: Optional[str]
+    region: Optional[str]
+    contacts: Optional[str]
+    avatar: Optional[str]
+
+
+class UserAbstractModel(UserUpdateModel):
+    id: Optional[int]
+
