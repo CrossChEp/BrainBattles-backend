@@ -7,7 +7,7 @@ from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from store.db_model import base
+from core.store.db_model import base
 
 config = context.config
 

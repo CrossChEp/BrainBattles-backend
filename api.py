@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
-from api_routers import auth_router, tasks_router, matchmaking_router, game_router
-from api_routers.users import users_router
+from core.api_routers import auth_router, tasks_router, matchmaking_router, game_router
+from core.api_routers.users import users_router
 
 app = FastAPI()
 
