@@ -75,7 +75,7 @@ def task_delete(task_id: int, user: UserTable, session: Session):
     session.commit()
 
 
-def user_tasks_get(user: UserTable, session: Session):
+def user_tasks_get(user: UserTable):
     """
     gets user's tasks
     :param user: User

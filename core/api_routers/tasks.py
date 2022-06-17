@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
+from core.controllers import add_task_controller
 from core.middlewares.database_session import generate_session
 from core.schemas import TaskModel, TaskUpdateModel
 from core.store import UserTable
@@ -11,16 +12,15 @@ tasks_router = APIRouter()
 
 
 @tasks_router.post('/api/task')
-def add_task(task: TaskModel, user: UserTable = Depends(get_current_user), session: Session = Depends(generate_session)):
+def add_task(task: TaskModel, user: UserTable = Depends(get_current_user)):
     """ POST endpoint that adds task to database
 
     :param task: TaskModel
     :param user: User
-    :param session: Session
     :return: Json
     """
 
-    return task_add(task=task, user=user, session=session)
+    return add_task_controller(user, task)
 
 
 @tasks_router.get('/api/tasks')
