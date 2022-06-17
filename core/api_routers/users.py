@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
-from core.controllers import get_all_users_controller, delete_user_controller, update_user_data_controller
+from core.controllers import get_all_users_controller, delete_user_controller, update_user_data_controller, \
+    get_user_by_id_controller
 from core.middlewares.database_session import generate_session
 from core.models import users_get, add_user_to_database, delete_user_from_database, update_user_data, get_user_by_id
 from core.schemas import UserGetModel, UserRegisterModel, UserUpdateModel
@@ -59,6 +60,6 @@ def update_user(update_data: UserUpdateModel, user: UserTable = Depends(get_curr
     return update_user_data_controller(user, update_data)
 
 
-@users_router.get('/api/user/{user_id}')
-def get_user(user_id: int, session: Session = Depends(generate_session)):
-    return get_user_by_id(user_id=user_id, session=session)
+@users_router.get('/api/user/{user_id}', response_model=UserGetModel)
+def get_user(user_id: int, user: UserTable = Depends(get_current_user)):
+    return get_user_by_id_controller(user, user_id)

@@ -27,6 +27,7 @@ class UserGetModel(BaseUserModel):
     wins: Optional[int]
     scores: Optional[int]
     games: Optional[int]
+    state: Optional[str]
 
 
 class UserUpdateModel(BaseModel):

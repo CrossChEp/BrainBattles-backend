@@ -22,14 +22,11 @@ class User:
     def update(self, user_update_data: UserUpdateModel):
         self.__state.update(user_update_data)
 
-    def show_data(self):
-        pass
-
     def get_users(self):
         return self.__state.get_users()
 
     def get_user(self, user: UserAbstractModel):
-        pass
+        return self.__state.get_concrete_user(user)
 
 
 class UserState:

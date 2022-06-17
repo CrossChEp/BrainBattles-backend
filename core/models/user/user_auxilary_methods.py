@@ -5,7 +5,7 @@ import bcrypt
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from core.configs import ranks
+from core.configs import ranks, DEFAULT
 from core.models.images.image_methods import decode_image
 from core.schemas import UserGetModel, UserRegisterModel, UserUpdateModel
 from core.store import UserTable
@@ -46,7 +46,8 @@ def generate_user_get_model(user: UserTable) -> UserGetModel:
         rank=user.rank,
         wins=user.wins,
         scores=user.scores,
-        games=user.games
+        games=user.games,
+        state=user.state
     )
     return user_get_model
 
@@ -148,5 +149,6 @@ def generate_new_user(user_model: UserRegisterModel, session: Session) -> None:
     new_user.rank = ranks[new_user.scores]
     new_user.wins = 0
     new_user.games = 0
+    new_user.state = DEFAULT
     session.add(new_user)
     session.commit()

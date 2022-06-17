@@ -28,3 +28,10 @@ redis = Redis(
 
 GAME = 'game'
 QUEUE = 'queue'
+DEFAULT = 'default'
+HELPER = 'helper'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+ELDER_ADMIN = 'elder_admin'
+CEO = 'ceo'
+BANNED = 'banned'
