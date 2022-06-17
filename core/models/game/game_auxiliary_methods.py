@@ -8,10 +8,10 @@ from core.configs import redis, QUEUE, GAME, ranks
 from core.middlewares import get_redis_table
 from core.models import get_user_by_id
 from core.schemas import GameModel
-from core.store import User, Task
+from core.store import UserTable, TaskTable
 
 
-def find_game(user: User, games: list):
+def find_game(user: UserTable, games: list):
     """ finds user's game
     :param user: User
     :param games: List[GameModel]
@@ -38,7 +38,7 @@ def get_random_user(users: list):
         return False
 
 
-def check_user_in_queue(user: User, queue: list):
+def check_user_in_queue(user: UserTable, queue: list):
     """ Checks if user in queue
         and if yes, returns user's place
 
@@ -53,7 +53,7 @@ def check_user_in_queue(user: User, queue: list):
     return False
 
 
-def check_user_in_game(user: User, games: list):
+def check_user_in_game(user: UserTable, games: list):
     """ Checks if user in games
         and if yes, returns game task
     :param user: User
@@ -77,7 +77,7 @@ def check_user_in_game(user: User, games: list):
     return False
 
 
-def generate_game_model(user_id: int, opponent_id: int, task: Task):
+def generate_game_model(user_id: int, opponent_id: int, task: TaskTable):
     """ generates game model using user id,
         opponent id and task
 
@@ -108,7 +108,7 @@ def delete_from_queue(queue: list, user_model: GameModel):
     return queue
 
 
-def adding_user_to_game(user: User, opponent: dict, random_task: Task):
+def adding_user_to_game(user: UserTable, opponent: dict, random_task: TaskTable):
     """ adds user to game
     :param user: User
     :param opponent: dict
@@ -140,7 +140,7 @@ def winner_exists(game: dict):
     return False
 
 
-def set_winner(game: dict, user: User, session: Session):
+def set_winner(game: dict, user: UserTable, session: Session):
     """sets winner to the user game and opponent game
     :param game: dict
         user's game
@@ -163,7 +163,7 @@ def set_winner(game: dict, user: User, session: Session):
     redis.set(GAME, json.dumps(games))
 
 
-def winner_check(user: User) -> bool:
+def winner_check(user: UserTable) -> bool:
     """ checks if user winner or
         has the opponent already won
     :param user: User
@@ -181,7 +181,7 @@ def winner_check(user: User) -> bool:
     return False
 
 
-def set_user_rank(scores: list, user: User):
+def set_user_rank(scores: list, user: UserTable):
     """Sets user rank that equal to his scores
 
     :param scores: list

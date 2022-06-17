@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 database_protocol = 'sqlite:///core/store/database.db'
-engine = create_engine(database_protocol)
+engine = create_engine(database_protocol, connect_args={'check_same_thread': False})
 session = sessionmaker(bind=engine)
 
 

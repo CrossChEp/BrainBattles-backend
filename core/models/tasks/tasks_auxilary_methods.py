@@ -2,10 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, Query
 
 from core.schemas import TaskModel
-from core.store import Task, User, TaskModeration
+from core.store import TaskTable, UserTable, TaskModerationTable
 
 
-def generate_new_task(task_model: TaskModel, user: User,
+def generate_new_task(task_model: TaskModel, user: UserTable,
                       session: Session) -> None:
     """generates task from task model `TaskModel` and
     adds it to database
@@ -15,15 +15,15 @@ def generate_new_task(task_model: TaskModel, user: User,
     :param session: Session
     """
 
-    task = Task(**task_model.dict())
+    task = TaskTable(**task_model.dict())
     user.tasks.append(task)
-    moderated_task = TaskModeration()
+    moderated_task = TaskModerationTable()
     task.is_moderated.append(moderated_task)
     session.add(task)
     session.commit()
 
 
-def check_task_availability(user: User, task: Query):
+def check_task_availability(user: UserTable, task: Query):
     """checks if user can change the task
 
     :param user: User
@@ -44,7 +44,7 @@ def is_task_exists(task: Query):
         raise HTTPException(status_code=404, detail='No tasks were found')
 
 
-def is_user_allowed_to_change_task(user: User, task: Query):
+def is_user_allowed_to_change_task(user: UserTable, task: Query):
     """checks if user allowed to change the task
 
     :param user: User

@@ -1,5 +1,5 @@
 from core.configs.config import ranks
-from core.store import User
+from core.store import UserTable
 
 
 def add_ranks_list(ranks: dict) -> list:
@@ -14,7 +14,7 @@ def add_ranks_list(ranks: dict) -> list:
     return ranks_list
 
 
-def filter_by_rank(users: list, active_user: User):
+def filter_by_rank(users: list, active_user: UserTable):
     """
     filters users in queue regarding user's rank
     :param users: list

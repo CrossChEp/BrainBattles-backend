@@ -6,7 +6,7 @@ from core.models.images.image_methods import create_default_image
 from core.models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \
     hash_password, create_pfp, is_user_exists, generate_new_user, generate_user_get_model_for_many_users
 from core.schemas import UserRegisterModel, UserUpdateModel, UserAbstractModel
-from core.store.db_model import User
+from core.store.db_model import UserTable
 from core.models.general_methods import model_without_nones
 
 
@@ -16,7 +16,7 @@ def users_get(session: Session):
     :param session: Session
     :return: User
     """
-    users = session.query(User).all()
+    users = session.query(UserTable).all()
     user_models = generate_user_get_model_for_many_users(users)
     return user_models
 
@@ -38,19 +38,19 @@ def add_user_to_database(user: UserRegisterModel, session: Session) -> None:
     generate_new_user(user_model=user, session=session)
 
 
-def delete_user_from_database(user: User, session: Session):
+def delete_user_from_database(user: UserTable, session: Session):
     """
     deletes user from database
     :param user: User
     :param session: Session
     :return: None
     """
-    user = session.query(User).filter_by(id=user.id).first()
+    user = session.query(UserTable).filter_by(id=user.id).first()
     session.delete(user)
     session.commit()
 
 
-def get_user_by_id(user_id: int, session: Session) -> User:
+def get_user_by_id(user_id: int, session: Session) -> UserTable:
     """ gets user by user id
 
     :param user_id: int
@@ -59,7 +59,7 @@ def get_user_by_id(user_id: int, session: Session) -> User:
     :return: User
     """
 
-    user = session.query(User).filter_by(id=user_id).first()
+    user = session.query(UserTable).filter_by(id=user_id).first()
     return user
 
 
@@ -72,11 +72,11 @@ def get_user(user: UserAbstractModel, session: Session):
     """
     new_user = model_without_nones(user.dict())
 
-    user = session.query(User).filter_by(**new_user).first()
+    user = session.query(UserTable).filter_by(**new_user).first()
     return user
 
 
-def update_user_data(user: User, update_data: UserUpdateModel, session: Session):
+def update_user_data(user: UserTable, update_data: UserUpdateModel, session: Session):
     """
     updates user in database
     :param user: User
@@ -90,7 +90,7 @@ def update_user_data(user: User, update_data: UserUpdateModel, session: Session)
 
     check_forbidden_nickname(nickname=update_data.nickname)
 
-    req: Query = session.query(User).filter_by(id=user.id)
+    req: Query = session.query(UserTable).filter_by(id=user.id)
 
     if update_data.password:
         update_data.password = hash_password(password=update_data.password)

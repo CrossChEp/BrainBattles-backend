@@ -12,7 +12,7 @@ from core.configs import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, ALGORITHM
 from core.middlewares.database_session import generate_session
 from core.schemas import Token, TokenData, UserGetModel
 from core.models import authenticate_user, get_user_by_id
-from core.store import User
+from core.store import UserTable
 from core.models.auth.auth_methods import create_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
@@ -58,5 +58,5 @@ def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(),
 
 
 @auth_router.get('/api/read/me', response_model=UserGetModel)
-def read_user_me(current_user: User = Depends(get_current_user)):
+def read_user_me(current_user: UserTable = Depends(get_current_user)):
     return current_user

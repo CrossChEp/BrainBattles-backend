@@ -36,6 +36,7 @@ Functions:
 from core.models.tasks.tasks_methods import task_add, tasks_get, task_get, task_delete, user_tasks_get, update_task_data
 from core.models.auth.auth_methods import authenticate_user, create_access_token, get_password,\
     verify_password_hash
+from core.models.user.user import User, UserState
 from core.models.user.user_methods import get_user, update_user_data, add_user_to_database, delete_user_from_database, users_get,\
     get_user_by_id
 from core.models.matchmaking.matchmaking_methods import adding_to_staging, delete_from_staging

@@ -2,12 +2,12 @@ from fastapi import HTTPException
 
 from core.middlewares import get_redis_table
 from core.models.matchmaking.matchmaking_auxilary_methods import generate_queue_model, search_subjects, delete_user
-from core.store import User
+from core.store import UserTable
 import json
 from core.configs import redis, QUEUE
 
 
-def adding_to_staging(subjects: list, user: User):
+def adding_to_staging(subjects: list, user: UserTable):
     """
     adds user to queue
     :param subjects: str
@@ -24,7 +24,7 @@ def adding_to_staging(subjects: list, user: User):
     redis.set('queue', json.dumps(queue))
 
 
-def delete_from_staging(user: User):
+def delete_from_staging(user: UserTable):
     """
     deletes user from queue(redis)
     :param user: User

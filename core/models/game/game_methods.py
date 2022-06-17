@@ -19,10 +19,10 @@ from core.models.game.game_auxiliary_methods import check_user_in_game, \
 from core.models.game.game_deleting_methods import delete_from_game
 from core.models.matchmaking.matchmaking_auxilary_methods import search_subjects
 from core.models.tasks.tasks_methods import get_random_task
-from core.store import User, Task
+from core.store import UserTable, TaskTable
 
 
-def user_adding(user: User, queue: list,
+def user_adding(user: UserTable, queue: list,
                 subjects: list, session: Session):
     """
     adds user to database
@@ -61,7 +61,7 @@ def user_adding(user: User, queue: list,
         return task
 
 
-def add_to_game(user: User, session: Session):
+def add_to_game(user: UserTable, session: Session):
     """
     adds user to game
     :param user: User
@@ -77,7 +77,7 @@ def add_to_game(user: User, session: Session):
     return task
 
 
-def leave_game(user: User, session: Session):
+def leave_game(user: UserTable, session: Session):
     """
     deletes user from game
     :param user: User
@@ -95,7 +95,7 @@ def leave_game(user: User, session: Session):
     redis.set(GAME, json.dumps(game))
 
 
-def make_try(answer: str, user: User, session: Session):
+def make_try(answer: str, user: UserTable, session: Session):
     """
     makes try
     :param answer: str
@@ -107,7 +107,7 @@ def make_try(answer: str, user: User, session: Session):
     game_checking = find_game(user=user, games=games)
     if not game_checking:
         raise HTTPException(status_code=403, detail='User is not in game')
-    task = session.query(Task).filter_by(id=game_checking['task']).first()
+    task = session.query(TaskTable).filter_by(id=game_checking['task']).first()
     if task.right_answer == answer:
         if not winner_exists(game=game_checking):
             set_winner(game=game_checking, user=user, session=session)
@@ -119,7 +119,7 @@ def make_try(answer: str, user: User, session: Session):
     raise HTTPException(status_code=400, detail='Wrong answer')
 
 
-def successful_try(user: User, task: Task, session: Session):
+def successful_try(user: UserTable, task: TaskTable, session: Session):
     """ deletes user from game and gives
         scores to user. User only when user
         gave right answer!

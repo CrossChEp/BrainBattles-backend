@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship
 base = declarative_base()
 
 
-class User(base):
+class UserTable(base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     nickname = Column(String)
@@ -19,10 +19,11 @@ class User(base):
     rank = Column(String)
     wins = Column(Integer)
     games = Column(Integer)
-    tasks = relationship('Task', backref='user')
+    state = Column(String)
+    tasks = relationship('TaskTable', backref='user')
 
 
-class Task(base):
+class TaskTable(base):
     __tablename__ = 'tasks'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -32,10 +33,10 @@ class Task(base):
     scores = Column(Float)
     rank = Column(String)
     author = Column(Integer, ForeignKey('users.id'))
-    is_moderated = relationship('TaskModeration', backref='task', cascade='all, delete')
+    is_moderated = relationship('TaskModerationTable', backref='task', cascade='all, delete')
 
 
-class TaskModeration(base):
+class TaskModerationTable(base):
     __tablename__ = 'tasks_moderation'
     id = Column(Integer, primary_key=True)
     task_id = Column(Integer, ForeignKey('tasks.id'))

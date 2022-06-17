@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from core.configs import ranks
 from core.models.images.image_methods import decode_image
 from core.schemas import UserGetModel, UserRegisterModel, UserUpdateModel
-from core.store import User
+from core.store import UserTable
 
 FORBIDDEN_NICKNAMES = [
     'con'
@@ -25,7 +25,7 @@ FORBIDDEN_NICKNAMES = [
 #     return UserModel(**user_json)
 
 
-def generate_user_get_model_for_many_users(users: List[User]) -> List[UserGetModel]:
+def generate_user_get_model_for_many_users(users: List[UserTable]) -> List[UserGetModel]:
     user_get_models = []
     for user in users:
         user_get_model = generate_user_get_model(user)
@@ -33,7 +33,7 @@ def generate_user_get_model_for_many_users(users: List[User]) -> List[UserGetMod
     return user_get_models
 
 
-def generate_user_get_model(user: User) -> UserGetModel:
+def generate_user_get_model(user: UserTable) -> UserGetModel:
     user_get_model = UserGetModel(
         id=user.id,
         nickname=user.nickname,
@@ -129,7 +129,7 @@ def is_user_exists(nickname: str, session: Session):
     :param session: Session
     """
 
-    user = session.query(User).filter_by(nickname=nickname).all()
+    user = session.query(UserTable).filter_by(nickname=nickname).all()
     if user:
         raise HTTPException(status_code=403, detail='user with such nickname already exists')
 
@@ -143,7 +143,7 @@ def generate_new_user(user_model: UserRegisterModel, session: Session) -> None:
     :return: None
     """
     user_clear_model = skip_json_key(user_model.dict(), 'avatar')
-    new_user = User(**user_clear_model)
+    new_user = UserTable(**user_clear_model)
     new_user.scores = 0
     new_user.rank = ranks[new_user.scores]
     new_user.wins = 0

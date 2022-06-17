@@ -4,14 +4,14 @@ from sqlalchemy.orm import Session
 from core.api_routers.auth import get_current_user
 from core.middlewares.database_session import generate_session
 from core.schemas import TaskModel, TaskUpdateModel
-from core.store import User
+from core.store import UserTable
 from core.models import task_add, tasks_get, task_get, task_delete, user_tasks_get, update_task_data
 
 tasks_router = APIRouter()
 
 
 @tasks_router.post('/api/task')
-def add_task(task: TaskModel, user: User = Depends(get_current_user), session: Session = Depends(generate_session)):
+def add_task(task: TaskModel, user: UserTable = Depends(get_current_user), session: Session = Depends(generate_session)):
     """ POST endpoint that adds task to database
 
     :param task: TaskModel
@@ -48,7 +48,7 @@ def get_task(task_id: int, session: Session = Depends(generate_session)):
 
 
 @tasks_router.delete('/api/task')
-def delete_task(task_id: int, user: User = Depends(get_current_user),
+def delete_task(task_id: int, user: UserTable = Depends(get_current_user),
                 session: Session = Depends(generate_session)):
     """ DELETE endpoint that deletes task from using task id
 
@@ -62,7 +62,7 @@ def delete_task(task_id: int, user: User = Depends(get_current_user),
 
 
 @tasks_router.get('/api/user_tasks')
-def get_user_tasks(user: User = Depends(get_current_user),
+def get_user_tasks(user: UserTable = Depends(get_current_user),
                    session: Session = Depends(generate_session)):
     """ GET endpoint that gets user's tasks
 
@@ -76,7 +76,7 @@ def get_user_tasks(user: User = Depends(get_current_user),
 
 @tasks_router.put('/api/task')
 def update_task(task_id: int, task_model: TaskUpdateModel,
-                user: User = Depends(get_current_user),
+                user: UserTable = Depends(get_current_user),
                 session: Session = Depends(generate_session)):
 
     return update_task_data(

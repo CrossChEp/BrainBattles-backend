@@ -8,7 +8,7 @@ from core.models.game.game_adding_rank_methods import add_ranks_list
 from core.models.general_methods import model_without_nones
 from core.models.tasks import generate_new_task, check_task_availability
 from core.schemas import TaskModel, TaskUpdateModel
-from core.store import Task, User
+from core.store import TaskTable, UserTable
 
 
 def get_random_task(tasks: list):
@@ -25,7 +25,7 @@ def get_random_task(tasks: list):
         return False
 
 
-def task_add(task: TaskModel, user: User, session: Session):
+def task_add(task: TaskModel, user: UserTable, session: Session):
     """
     adds task to database
     :param task: TaskModel
@@ -46,7 +46,7 @@ def tasks_get(session: Session):
     :param session: Session
     :return: Query
     """
-    return session.query(Task).all()
+    return session.query(TaskTable).all()
 
 
 def task_get(task_id: int, session: Session):
@@ -56,11 +56,11 @@ def task_get(task_id: int, session: Session):
     :param session: Session
     :return: Task
     """
-    task = session.query(Task).filter_by(id=task_id).first()
+    task = session.query(TaskTable).filter_by(id=task_id).first()
     return task
 
 
-def task_delete(task_id: int, user: User, session: Session):
+def task_delete(task_id: int, user: UserTable, session: Session):
     """
     deletes task from database using task id
     :param task_id: int
@@ -68,14 +68,14 @@ def task_delete(task_id: int, user: User, session: Session):
     :param session: Session
     :return: None
     """
-    task = session.query(Task).filter_by(id=task_id).first()
+    task = session.query(TaskTable).filter_by(id=task_id).first()
     if task not in user.tasks:
         raise HTTPException(status_code=403, detail="You don't have such a permission")
     session.delete(task)
     session.commit()
 
 
-def user_tasks_get(user: User, session: Session):
+def user_tasks_get(user: UserTable, session: Session):
     """
     gets user's tasks
     :param user: User
@@ -86,7 +86,7 @@ def user_tasks_get(user: User, session: Session):
 
 
 def update_task_data(task_id: int, task_model: TaskUpdateModel,
-                       session: Session, user: User) -> None:
+                     session: Session, user: UserTable) -> None:
     """ updates user's task using task's id
 
     :param task_id: int
@@ -99,7 +99,7 @@ def update_task_data(task_id: int, task_model: TaskUpdateModel,
     :return: None
     """
 
-    task = session.query(Task).filter_by(id=task_id)
+    task = session.query(TaskTable).filter_by(id=task_id)
 
     check_task_availability(user=user, task=task)
 

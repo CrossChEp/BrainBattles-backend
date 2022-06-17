@@ -1,8 +1,8 @@
 from core.schemas import QueueModel
-from core.store import User
+from core.store import UserTable
 
 
-def generate_queue_model(user: User, subjects: list) -> QueueModel:
+def generate_queue_model(user: UserTable, subjects: list) -> QueueModel:
     """ generates QueueModule using User(user's database cell)
         and subject
     :param user: User
