@@ -94,9 +94,10 @@ def update_user_data(user: UserTable, update_data: UserUpdateModel, session: Ses
 
     if update_data.password:
         update_data.password = hash_password(password=update_data.password)
-    checked_user_data = check_avatar_availability(user_update_data=update_data)
-    req.update(checked_user_data)
 
     if update_data.avatar is not None:
-        create_pfp(avatar=update_data.avatar, nickname=checked_user_data.nickname)
+        create_pfp(avatar=update_data.avatar, nickname=update_data.nickname)
+
+    checked_user_data = model_without_nones(update_data.dict())
+    req.update(checked_user_data)
     session.commit()

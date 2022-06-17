@@ -19,8 +19,8 @@ class User:
     def delete(self):
         self.__state.delete()
 
-    def update(self):
-        pass
+    def update(self, user_update_data: UserUpdateModel):
+        self.__state.update(user_update_data)
 
     def show_data(self):
         pass
