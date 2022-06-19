@@ -109,7 +109,7 @@ class DefaultState(UserState):
 
     def get_my_tasks(self):
         user = self.get_user_database()
-        user_tasks_get(user)
+        return user_tasks_get(user)
 
     def update_my_task_data(self, task_id: int, task_model: TaskUpdateModel):
         user = self.get_user_database()

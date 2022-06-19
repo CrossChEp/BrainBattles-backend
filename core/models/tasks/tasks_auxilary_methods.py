@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, Query
 
+from core.models.user.user_methods import get_user_by_id
 from core.schemas import TaskModel
 from core.store import TaskTable, UserTable, TaskModerationTable
 
@@ -14,7 +15,7 @@ def generate_new_task(task_model: TaskModel, user: UserTable,
     :param user: User
     :param session: Session
     """
-
+    user = get_user_by_id(user.id, session)
     task = TaskTable(**task_model.dict())
     user.tasks.append(task)
     moderated_task = TaskModerationTable()

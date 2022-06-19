@@ -26,3 +26,8 @@ def get_user_by_id_controller(user: UserTable, user_id: int):
 def add_task_controller(user: UserTable, task: TaskModel):
     user = User(user)
     return user.add_task(task)
+
+
+def get_user_tasks_controller(user: UserTable):
+    user = User(user)
+    return user.get_my_tasks()

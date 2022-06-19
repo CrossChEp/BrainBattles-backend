@@ -1,6 +1,6 @@
 """Module for users' database methods"""
 
-from fastapi import Query, HTTPException
+from fastapi import Query
 from sqlalchemy.orm import Session
 from core.models.images.image_methods import create_default_image
 from core.models.user.user_auxilary_methods import check_forbidden_nickname, check_avatar_availability, \

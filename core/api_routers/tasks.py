@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
-from core.controllers import add_task_controller
+from core.controllers import add_task_controller, get_user_tasks_controller
 from core.middlewares.database_session import generate_session
 from core.schemas import TaskModel, TaskUpdateModel
 from core.store import UserTable
@@ -62,8 +62,7 @@ def delete_task(task_id: int, user: UserTable = Depends(get_current_user),
 
 
 @tasks_router.get('/api/user_tasks')
-def get_user_tasks(user: UserTable = Depends(get_current_user),
-                   session: Session = Depends(generate_session)):
+def get_user_tasks(user: UserTable = Depends(get_current_user)):
     """ GET endpoint that gets user's tasks
 
     :param user: User
@@ -71,7 +70,7 @@ def get_user_tasks(user: UserTable = Depends(get_current_user),
     :return: Json
     """
 
-    return user_tasks_get(user=user, session=session)
+    return get_user_tasks_controller(user)
 
 
 @tasks_router.put('/api/task')
