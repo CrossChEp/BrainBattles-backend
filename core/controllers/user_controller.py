@@ -1,5 +1,5 @@
 from core.models import User
-from core.schemas import UserUpdateModel, UserAbstractModel, TaskModel
+from core.schemas import UserUpdateModel, UserAbstractModel, TaskModel, TaskUpdateModel
 from core.store import UserTable
 
 
@@ -31,3 +31,8 @@ def add_task_controller(user: UserTable, task: TaskModel):
 def get_user_tasks_controller(user: UserTable):
     user = User(user)
     return user.get_my_tasks()
+
+
+def update_user_tasks_controller(user: UserTable, task_id: int, task_model: TaskUpdateModel):
+    user = User(user)
+    user.update_my_task_data(task_id, task_model)

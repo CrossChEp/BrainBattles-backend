@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from core.configs import ranks
+from core.models.user.user_methods import get_user_by_id
 from core.models.game.game_adding_rank_methods import add_ranks_list
 from core.models.general_methods import model_without_nones
 from core.models.tasks import generate_new_task, check_task_availability
@@ -100,7 +101,7 @@ def update_task_data(task_id: int, task_model: TaskUpdateModel,
     """
 
     task = session.query(TaskTable).filter_by(id=task_id)
-
+    user = get_user_by_id(user.id, session)
     check_task_availability(user=user, task=task)
 
     clear_task_model = model_without_nones(model=task_model.dict())
