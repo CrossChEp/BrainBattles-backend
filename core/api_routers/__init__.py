@@ -18,3 +18,4 @@ from core.api_routers.auth import auth_router
 from core.api_routers.tasks import tasks_router
 from core.api_routers.matchmaking import matchmaking_router
 from core.api_routers.game import game_router
+from core.api_routers.admin import admin_router

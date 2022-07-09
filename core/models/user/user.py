@@ -1,12 +1,13 @@
 from sqlalchemy.orm import Session
 from tornado.process import task_id
 
+from core.configs.config import HIDDEN, OPEN
 from core.middlewares.database_session import generate_session
 from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
 from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel
-from core.store import UserTable
+from core.store import UserTable, TaskTable
 
 
 class User:
@@ -45,6 +46,12 @@ class User:
 
     def get_task_using_id(self, task_id: int):
         return self.__state.get_task_using_id(task_id)
+
+    def add_task_to_public(self, task: TaskTable):
+        self.__state.add_task_to_public(task)
+
+    def hide_task(self, task_id: int):
+        self.__state.hide_task(task_id)
 
 
 class UserState:
@@ -87,6 +94,12 @@ class UserState:
         raise NotImplementedError
 
     def get_task_using_id(self, task_id: int):
+        raise NotImplementedError
+
+    def add_task_to_public(self, task_id: int):
+        raise NotImplementedError
+
+    def hide_task(self, task_id: int):
         raise NotImplementedError
 
 
@@ -139,8 +152,19 @@ class DefaultState(UserState):
         return get_task_by_id(task_id, session)
 
 
-class HelperState(UserState):
-    pass
+class HelperState(DefaultState):
+
+    def add_task_to_public(self, task_id: int):
+        session: Session = next(generate_session())
+        task = get_task_by_id(task_id, session)
+        task.state = OPEN
+        session.commit()
+
+    def hide_task(self, task_id: int):
+        session: Session = next(generate_session())
+        task = get_task_by_id(task_id, session)
+        task.state = HIDDEN
+        session.commit()
 
 
 class ModeratorState(UserState):
