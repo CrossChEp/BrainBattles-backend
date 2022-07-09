@@ -8,3 +8,8 @@ from core.store import UserTable
 def hide_task_controller(task_id: int, user: UserTable):
     user = User(user)
     user.hide_task(task_id)
+
+
+def add_task_to_public_controller(task_id: int, user: UserTable):
+    user = User(user)
+    user.add_task_to_public(task_id)

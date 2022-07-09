@@ -43,6 +43,16 @@ def task_add(task: TaskAddModel, user: UserTable, session: Session):
     generate_new_task(task_model=task, session=session, user=user)
 
 
+def get_concrete_task_with_every_state(task_id: int, session: Session):
+    task = session.query(TaskTable).filter_by(id=task_id).first()
+    return task
+
+
+def get_all_tasks_from_database(session: Session):
+    tasks = session.query(TaskTable).all()
+    return tasks
+
+
 def tasks_get(session: Session):
     """
     gets all task from database

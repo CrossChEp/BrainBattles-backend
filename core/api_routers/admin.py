@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi.params import Depends
 
 from core.api_routers.auth import get_current_user
-from core.controllers import hide_task_controller
+from core.controllers import hide_task_controller, add_task_to_public_controller
 from core.store import UserTable
 
 admin_router = APIRouter()
@@ -14,5 +14,5 @@ def hide_task(task_id: int, user: UserTable = Depends(get_current_user)):
 
 
 @admin_router.post('/admin/task/post/{task_id}')
-def post_task_to_public(task_id: int, user: UserTable = Depends(get_current_user)):
-    pass
+def add_task_to_public(task_id: int, user: UserTable = Depends(get_current_user)):
+    add_task_to_public_controller(task_id, user)

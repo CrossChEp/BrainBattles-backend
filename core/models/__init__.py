@@ -33,7 +33,8 @@ Functions:
 """
 
 
-from core.models.tasks.tasks_methods import task_add, tasks_get, get_task_by_id, user_tasks_get, update_task_data
+from core.models.tasks.tasks_methods import task_add, tasks_get, get_task_by_id, user_tasks_get, update_task_data,\
+    get_all_tasks_from_database, get_concrete_task_with_every_state
 from core.models.auth.auth_methods import authenticate_user, create_access_token, get_password,\
     verify_password_hash
 from core.models.user.user import User, UserState
