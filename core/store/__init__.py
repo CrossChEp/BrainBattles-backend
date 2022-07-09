@@ -14,4 +14,4 @@
         get_session
             gets database session
 """
-from core.store.db_model import UserTable, TaskTable, TaskModerationTable
+from core.store.db_model import UserTable, TaskTable

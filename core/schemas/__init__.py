@@ -16,5 +16,5 @@ from core.schemas.user_models import UserRegisterModel, UserGetModel, UserUpdate
     UserAbstractModel
 from core.schemas.game_models import GameModel
 from core.schemas.queue_models import QueueModel
-from core.schemas.tasks_models import TaskModel, TaskUpdateModel
+from core.schemas.tasks_models import TaskAddModel, TaskUpdateModel, TaskGetModel
 from core.schemas.token_models import Token, TokenData

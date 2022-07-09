@@ -1,5 +1,5 @@
 from core.models import User
-from core.schemas import UserUpdateModel, UserAbstractModel, TaskModel, TaskUpdateModel
+from core.schemas import UserUpdateModel, UserAbstractModel, TaskAddModel, TaskUpdateModel
 from core.store import UserTable
 
 
@@ -23,7 +23,7 @@ def get_user_by_id_controller(user: UserTable, user_id: int):
     return user.get_user(UserAbstractModel(id=user_id))
 
 
-def add_task_controller(user: UserTable, task: TaskModel):
+def add_task_controller(user: UserTable, task: TaskAddModel):
     user = User(user)
     return user.add_task(task)
 

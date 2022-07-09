@@ -5,7 +5,7 @@ from core.middlewares.database_session import generate_session
 from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
-from core.schemas import UserAbstractModel, UserUpdateModel, TaskModel, TaskUpdateModel
+from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel
 from core.store import UserTable
 
 
@@ -31,7 +31,7 @@ class User:
     def get_user(self, user: UserAbstractModel):
         return self.__state.get_concrete_user(user)
 
-    def add_task(self, task: TaskModel):
+    def add_task(self, task: TaskAddModel):
         self.__state.add_task(task)
 
     def get_my_tasks(self):
@@ -74,7 +74,7 @@ class UserState:
     def get_concrete_user(self, user: UserAbstractModel):
         raise NotImplementedError
 
-    def add_task(self, task: TaskModel):
+    def add_task(self, task: TaskAddModel):
         raise NotImplementedError
 
     def get_my_tasks(self):
@@ -115,7 +115,7 @@ class DefaultState(UserState):
         session: Session = next(generate_session())
         return get_user(user, session)
 
-    def add_task(self, task: TaskModel):
+    def add_task(self, task: TaskAddModel):
         session: Session = next(generate_session())
         user = self.get_user_database()
         task_add(task, user, session)

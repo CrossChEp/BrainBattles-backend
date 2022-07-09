@@ -1,12 +1,15 @@
+from typing import List
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, Query
 
+from core.configs.config import NOT_MODERATED
 from core.models.user.user_methods import get_user_by_id
-from core.schemas import TaskModel
-from core.store import TaskTable, UserTable, TaskModerationTable
+from core.schemas import TaskAddModel, TaskGetModel
+from core.store import TaskTable, UserTable
 
 
-def generate_new_task(task_model: TaskModel, user: UserTable,
+def generate_new_task(task_model: TaskAddModel, user: UserTable,
                       session: Session) -> None:
     """generates task from task model `TaskModel` and
     adds it to database
@@ -17,9 +20,8 @@ def generate_new_task(task_model: TaskModel, user: UserTable,
     """
     user = get_user_by_id(user.id, session)
     task = TaskTable(**task_model.dict())
+    task.state = NOT_MODERATED
     user.tasks.append(task)
-    moderated_task = TaskModerationTable()
-    task.is_moderated.append(moderated_task)
     session.add(task)
     session.commit()
 
@@ -56,3 +58,22 @@ def is_user_allowed_to_change_task(user: UserTable, task: Query):
     if task.one() not in user.tasks:
         raise HTTPException(status_code=403, detail="You don't have permission to update this task")
 
+
+def create_task_get_model(task: TaskTable) -> TaskGetModel:
+    task_model = TaskGetModel(
+        id=task.id,
+        name=task.name,
+        subject=task.subject,
+        content=task.content,
+        rank=task.rank,
+        state=task.state
+    )
+    return task_model
+
+
+def create_list_of_task_models(task_list: list) -> List[TaskGetModel]:
+    list_of_task_get_models = []
+    for task in task_list:
+        task_get_model = create_task_get_model(task)
+        list_of_task_get_models.append(task_get_model)
+    return list_of_task_get_models

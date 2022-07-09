@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class TaskModel(BaseModel):
+class TaskAddModel(BaseModel):
     """Scheme of task
         fields:
         name: str
@@ -37,6 +37,18 @@ class TaskUpdateModel(BaseModel):
     right_answer: Optional[str]
     scores: Optional[int]
     rank: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class TaskGetModel(BaseModel):
+    id: int
+    name: str
+    subject: str
+    content: str
+    rank: str
+    state: str
 
     class Config:
         orm_mode = True

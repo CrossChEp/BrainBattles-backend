@@ -6,7 +6,7 @@ from core.controllers import add_task_controller, get_user_tasks_controller, upd
      delete_user_task_controller
 from core.controllers.user_controller import get_task_by_id_controller
 from core.middlewares.database_session import generate_session
-from core.schemas import TaskModel, TaskUpdateModel
+from core.schemas import TaskAddModel, TaskUpdateModel, TaskGetModel
 from core.store import UserTable
 from core.models import tasks_get, get_task_by_id
 
@@ -14,7 +14,7 @@ tasks_router = APIRouter()
 
 
 @tasks_router.post('/api/task')
-def add_task(task: TaskModel, user: UserTable = Depends(get_current_user)):
+def add_task(task: TaskAddModel, user: UserTable = Depends(get_current_user)):
     """ POST endpoint that adds task to database
 
     :param task: TaskModel
@@ -36,7 +36,7 @@ def get_tasks(session: Session = Depends(generate_session)):
     return tasks_get(session=session)
 
 
-@tasks_router.get('/api/task/{task_id}')
+@tasks_router.get('/api/task/{task_id}', response_model=TaskGetModel)
 def get_task(task_id: int, user: UserTable = Depends(get_current_user)):
 
     """ GET endpoint that gets concrete task using id

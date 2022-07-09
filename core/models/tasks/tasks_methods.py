@@ -4,11 +4,13 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from core.configs import ranks
+from core.configs.config import OPEN
+from core.models.tasks.tasks_auxilary_methods import create_list_of_task_models
 from core.models.user.user_methods import get_user_by_id
 from core.models.game.game_adding_rank_methods import add_ranks_list
 from core.models.general_methods import model_without_nones
 from core.models.tasks import generate_new_task, check_task_availability
-from core.schemas import TaskModel, TaskUpdateModel
+from core.schemas import TaskAddModel, TaskUpdateModel
 from core.store import TaskTable, UserTable
 
 
@@ -26,7 +28,7 @@ def get_random_task(tasks: list):
         return False
 
 
-def task_add(task: TaskModel, user: UserTable, session: Session):
+def task_add(task: TaskAddModel, user: UserTable, session: Session):
     """
     adds task to database
     :param task: TaskModel
@@ -47,7 +49,9 @@ def tasks_get(session: Session):
     :param session: Session
     :return: Query
     """
-    return session.query(TaskTable).all()
+    tasks = session.query(TaskTable).filter_by(state=OPEN).all()
+    task_models = create_list_of_task_models(tasks)
+    return task_models
 
 
 def get_task_by_id(task_id: int, session: Session):
@@ -57,7 +61,8 @@ def get_task_by_id(task_id: int, session: Session):
     :param session: Session
     :return: Task
     """
-    task = session.query(TaskTable).filter_by(id=task_id).first()
+    task = session.query(TaskTable).filter_by(id=task_id, state=OPEN).first()
+
     return task
 
 
