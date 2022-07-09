@@ -50,7 +50,7 @@ def tasks_get(session: Session):
     return session.query(TaskTable).all()
 
 
-def task_get(task_id: int, session: Session):
+def get_task_by_id(task_id: int, session: Session):
     """
     gets concrete task using task id
     :param task_id: int
@@ -61,7 +61,7 @@ def task_get(task_id: int, session: Session):
     return task
 
 
-def task_delete(task_id: int, user: UserTable, session: Session):
+def delete_user_task(task_id: int, user: UserTable, session: Session):
     """
     deletes task from database using task id
     :param task_id: int
@@ -69,9 +69,16 @@ def task_delete(task_id: int, user: UserTable, session: Session):
     :param session: Session
     :return: None
     """
+    user = get_user_by_id(user.id, session)
     task = session.query(TaskTable).filter_by(id=task_id).first()
     if task not in user.tasks:
         raise HTTPException(status_code=403, detail="You don't have such a permission")
+    session.delete(task)
+    session.commit()
+
+
+def delete_task(task_id: int, session: Session) -> None:
+    task = get_task_by_id(task_id, session)
     session.delete(task)
     session.commit()
 

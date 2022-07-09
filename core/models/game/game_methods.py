@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from core.configs import ranks, QUEUE, GAME, redis
 from core.middlewares import get_redis_table
-from core.models import task_get
+from core.models import get_task_by_id
 from core.models.game.game_adding_rank_methods import filter_by_rank
 from core.models.game.game_adding_subject_methods import filtered_users, get_game_subject
 from core.models.game.game_adding_task_methods import filter_task_by_rank
@@ -88,7 +88,7 @@ def leave_game(user: UserTable, session: Session):
     user_game = find_game(user=user, games=game)
     if not user_game:
         raise HTTPException(status_code=403, detail='User not in game')
-    task = task_get(task_id=user_game['task'], session=session)
+    task = get_task_by_id(task_id=user_game['task'], session=session)
     user_model = generate_game_model(user_id=user.id,
                                      opponent_id=user_game['opponent_id'], task=task)
     game = delete_from_game(user_model=user_model, game=game)

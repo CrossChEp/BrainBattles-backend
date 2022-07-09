@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from core.api_routers.auth import get_current_user
-from core.controllers import add_task_controller, get_user_tasks_controller, update_user_tasks_controller
+from core.controllers import add_task_controller, get_user_tasks_controller, update_user_tasks_controller, \
+     delete_user_task_controller
 from core.middlewares.database_session import generate_session
 from core.schemas import TaskModel, TaskUpdateModel
 from core.store import UserTable
-from core.models import task_add, tasks_get, task_get, task_delete, user_tasks_get, update_task_data
+from core.models import tasks_get, get_task_by_id
 
 tasks_router = APIRouter()
 
@@ -34,7 +35,7 @@ def get_tasks(session: Session = Depends(generate_session)):
     return tasks_get(session=session)
 
 
-@tasks_router.get('/api/task')
+@tasks_router.get('/api/task/{task_id}')
 def get_task(task_id: int, session: Session = Depends(generate_session)):
 
     """ GET endpoint that gets concrete task using id
@@ -44,10 +45,10 @@ def get_task(task_id: int, session: Session = Depends(generate_session)):
     :return: Json
     """
 
-    return task_get(task_id=task_id, session=session)
+    return get_task_by_id(task_id=task_id, session=session)
 
 
-@tasks_router.delete('/api/task')
+@tasks_router.delete('/api/task/{task_id}')
 def delete_task(task_id: int, user: UserTable = Depends(get_current_user),
                 session: Session = Depends(generate_session)):
     """ DELETE endpoint that deletes task from using task id
@@ -58,7 +59,7 @@ def delete_task(task_id: int, user: UserTable = Depends(get_current_user),
     :return: None
     """
 
-    return task_delete(task_id=task_id, user=user, session=session)
+    return delete_user_task_controller(user, task_id)
 
 
 @tasks_router.get('/api/user_tasks')
@@ -73,7 +74,7 @@ def get_user_tasks(user: UserTable = Depends(get_current_user)):
     return get_user_tasks_controller(user)
 
 
-@tasks_router.put('/api/task')
+@tasks_router.put('/api/task/{task_id}')
 def update_task(task_id: int, task_model: TaskUpdateModel,
                 user: UserTable = Depends(get_current_user)):
 

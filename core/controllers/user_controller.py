@@ -36,3 +36,8 @@ def get_user_tasks_controller(user: UserTable):
 def update_user_tasks_controller(user: UserTable, task_id: int, task_model: TaskUpdateModel):
     user = User(user)
     user.update_my_task_data(task_id, task_model)
+
+
+def delete_user_task_controller(user: UserTable, task_id: int):
+    user = User(user)
+    user.delete_my_task(task_id)
