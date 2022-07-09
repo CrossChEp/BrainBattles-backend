@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from core.api_routers.auth import get_current_user
 from core.controllers import add_task_controller, get_user_tasks_controller, update_user_tasks_controller, \
      delete_user_task_controller
+from core.controllers.user_controller import get_task_by_id_controller
 from core.middlewares.database_session import generate_session
 from core.schemas import TaskModel, TaskUpdateModel
 from core.store import UserTable
@@ -36,16 +37,16 @@ def get_tasks(session: Session = Depends(generate_session)):
 
 
 @tasks_router.get('/api/task/{task_id}')
-def get_task(task_id: int, session: Session = Depends(generate_session)):
+def get_task(task_id: int, user: UserTable = Depends(get_current_user)):
 
     """ GET endpoint that gets concrete task using id
 
     :param task_id: int
-    :param session: Session
+    :param user: UserTable
     :return: Json
     """
 
-    return get_task_by_id(task_id=task_id, session=session)
+    return get_task_by_id_controller(user, task_id)
 
 
 @tasks_router.delete('/api/task/{task_id}')

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from tornado.process import task_id
 
 from core.middlewares.database_session import generate_session
-from core.models import task_add, user_tasks_get, update_task_data
+from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
 from core.schemas import UserAbstractModel, UserUpdateModel, TaskModel, TaskUpdateModel
@@ -43,6 +43,9 @@ class User:
     def delete_my_task(self, task_id: int):
         self.__state.delete_my_task(task_id)
 
+    def get_task_using_id(self, task_id: int):
+        return self.__state.get_task_using_id(task_id)
+
 
 class UserState:
 
@@ -81,6 +84,9 @@ class UserState:
         raise NotImplementedError
 
     def delete_my_task(self, task_id: int):
+        raise NotImplementedError
+
+    def get_task_using_id(self, task_id: int):
         raise NotImplementedError
 
 
@@ -127,6 +133,10 @@ class DefaultState(UserState):
         user = self.get_user_database()
         session: Session = next(generate_session())
         delete_user_task(task_id, user, session)
+
+    def get_task_using_id(self, task_id: int):
+        session: Session = next(generate_session())
+        return get_task_by_id(task_id, session)
 
 
 class HelperState(UserState):
