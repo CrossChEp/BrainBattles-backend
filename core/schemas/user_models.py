@@ -18,6 +18,9 @@ class UserRegisterModel(BaseUserModel):
     password: str
     avatar: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 class UserGetModel(BaseUserModel):
     id: int
@@ -29,6 +32,9 @@ class UserGetModel(BaseUserModel):
     scores: Optional[int]
     games: Optional[int]
     state: Optional[str]
+
+    class Config:
+        orm_mode = True
 
 
 class UserUpdateModel(BaseModel):
@@ -42,11 +48,30 @@ class UserUpdateModel(BaseModel):
     contacts: Optional[str]
     avatar: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 class UserAbstractModel(UserUpdateModel):
     id: Optional[int]
+
+    class Config:
+        orm_mode = True
 
 
 class BanUserModel(BaseModel):
     id: int
     term: Optional[datetime]
+
+    class Config:
+        orm_mode = True
+
+
+class UserUpdateAdminModel(UserUpdateModel):
+    rank: Optional[str]
+    wins: Optional[int]
+    scores: Optional[int]
+    games: Optional[int]
+
+    class Config:
+        orm_mode = True

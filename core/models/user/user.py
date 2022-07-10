@@ -3,10 +3,11 @@ from sqlalchemy.orm import Session
 from core.configs.config import HIDDEN, OPEN
 from core.middlewares.database_session import generate_session
 from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state
-from core.models.admin.users.admin_users_methods import ban_user_temporary, ban_user_permanently
+from core.models.admin.users.admin_users_methods import ban_user_temporary, ban_user_permanently, edit_user
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
-from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel, BanUserModel
+from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel, BanUserModel, \
+    UserUpdateAdminModel
 from core.store import UserTable
 
 
@@ -55,6 +56,10 @@ class User:
 
     def ban_user(self, ban_data: BanUserModel):
         self.__state.ban_user(ban_data)
+
+    def edit_another_user(self, user_id: int,
+                                 user_update_model: UserUpdateAdminModel):
+        self.__state.edit_another_user(user_id, user_update_model)
 
 
 class UserState:
@@ -106,6 +111,10 @@ class UserState:
         raise NotImplementedError
 
     def ban_user(self, ban_data: BanUserModel):
+        raise NotImplementedError
+
+    def edit_another_user(self, user_id: int,
+                                 user_update_model: UserUpdateAdminModel) -> None:
         raise NotImplementedError
 
 
@@ -185,6 +194,12 @@ class AdminState(ModeratorState):
     def ban_user(self, ban_data: BanUserModel):
         session: Session = next(generate_session())
         ban_user_permanently(ban_data, session)
+
+    def edit_another_user(self, user_id: int,
+                                 user_update_model: UserUpdateAdminModel) -> None:
+        session: Session = next(generate_session())
+        user = get_user_by_id(user_id, session)
+        edit_user(user, user_update_model, session)
 
 
 class ElderAdminState(UserState):

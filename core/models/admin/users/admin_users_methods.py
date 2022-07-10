@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from core.configs import BANNED, DEFAULT
-from core.configs.config import OPEN
-from core.models.user.user_methods import get_user_by_id
-from core.schemas import BanUserModel
+from core.models.user.user_methods import get_user_by_id, update_user_data
+from core.schemas import BanUserModel, UserUpdateAdminModel
 from core.store import UserTable
 
 
@@ -34,3 +33,7 @@ def unban_user(user: UserTable, session: Session) -> None:
     user.state = DEFAULT
     user.ban_term = None
     session.commit()
+
+
+def edit_user(user: UserTable, update_data: UserUpdateAdminModel, session: Session):
+    update_user_data(user, update_data, session)

@@ -4,4 +4,5 @@ from core.controllers.user_controller import get_all_users_controller, delete_us
 from core.controllers.admin_controllers.admin_tasks_controller import hide_task_controller,\
     add_task_to_public_controller
 
-from core.controllers.admin_controllers.admin_users_controller import ban_user_controller
+from core.controllers.admin_controllers.admin_users_controller import ban_user_controller,\
+    edit_user_controller
