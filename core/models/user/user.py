@@ -2,9 +2,8 @@ from sqlalchemy.orm import Session
 
 from core.configs.config import HIDDEN, OPEN
 from core.middlewares.database_session import generate_session
-from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state, \
-    ban_user_permanently
-from core.models.admin.users.admin_users_methods import ban_user_temporary
+from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state
+from core.models.admin.users.admin_users_methods import ban_user_temporary, ban_user_permanently
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
 from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel, BanUserModel

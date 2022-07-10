@@ -49,4 +49,4 @@ class UserAbstractModel(UserUpdateModel):
 
 class BanUserModel(BaseModel):
     id: int
-    term: datetime
+    term: Optional[datetime]
