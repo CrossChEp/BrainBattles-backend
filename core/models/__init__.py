@@ -45,4 +45,5 @@ from core.models.game.game_methods import add_to_game, leave_game, make_try
 from core.models.game.game_auxiliary_methods import winner_check
 from core.models.images.image_methods import decode_image, encode_image
 from .general_methods import model_without_nones
-from core.models.admin.users.admin_users_methods import unban_user, ban_user_temporary
+from core.models.admin.users.admin_users_methods import unban_user, ban_user_temporary,\
+    ban_user_permanently

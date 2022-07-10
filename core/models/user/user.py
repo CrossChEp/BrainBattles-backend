@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 
 from core.configs.config import HIDDEN, OPEN
 from core.middlewares.database_session import generate_session
-from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state
+from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state, \
+    ban_user_permanently
 from core.models.admin.users.admin_users_methods import ban_user_temporary
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
@@ -172,19 +173,19 @@ class HelperState(DefaultState):
         task.state = HIDDEN
         session.commit()
 
+
+class ModeratorState(HelperState):
+
     def ban_user(self, ban_data: BanUserModel):
         session: Session = next(generate_session())
         ban_user_temporary(ban_data, session)
 
 
-class ModeratorState(HelperState):
+class AdminState(ModeratorState):
 
     def ban_user(self, ban_data: BanUserModel):
-        pass
-
-
-class AdminState(UserState):
-    pass
+        session: Session = next(generate_session())
+        ban_user_permanently(ban_data, session)
 
 
 class ElderAdminState(UserState):

@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -6,7 +6,7 @@ from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from core.configs import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, BANNED
+from core.configs import SECRET_KEY, ALGORITHM, BANNED
 from core.models.admin.users.admin_users_methods import unban_user
 from core.models.user.user_methods import get_user
 from core.schemas import UserAbstractModel
