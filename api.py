@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
-from core.api_routers import auth_router, tasks_router, matchmaking_router, game_router, admin_router
+from core.api_routers import auth_router, tasks_router, matchmaking_router, game_router, admin_task_router, \
+    admin_users_router
 from core.api_routers.users import users_router
 
 app = FastAPI()
@@ -31,7 +32,8 @@ app.include_router(auth_router)
 app.include_router(tasks_router)
 app.include_router(matchmaking_router)
 app.include_router(game_router)
-app.include_router(admin_router)
+app.include_router(admin_task_router)
+app.include_router(admin_users_router)
 
 if __name__ == '__main__':
     uvicorn.run(app, host='127.0.0.1', port=8000)

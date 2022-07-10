@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from tornado.process import task_id
 
 from core.configs.config import HIDDEN, OPEN
 from core.middlewares.database_session import generate_session
 from core.models import task_add, user_tasks_get, update_task_data, get_task_by_id, get_concrete_task_with_every_state
+from core.models.admin.users.admin_users_methods import ban_user_temporary
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
-from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel
-from core.store import UserTable, TaskTable
+from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel, BanUserModel
+from core.store import UserTable
 
 
 class User:
@@ -52,6 +52,9 @@ class User:
 
     def hide_task(self, task_id: int):
         self.__state.hide_task(task_id)
+
+    def ban_user(self, ban_data: BanUserModel):
+        self.__state.ban_user(ban_data)
 
 
 class UserState:
@@ -100,6 +103,9 @@ class UserState:
         raise NotImplementedError
 
     def hide_task(self, task_id: int):
+        raise NotImplementedError
+
+    def ban_user(self, ban_data: BanUserModel):
         raise NotImplementedError
 
 
@@ -166,9 +172,15 @@ class HelperState(DefaultState):
         task.state = HIDDEN
         session.commit()
 
+    def ban_user(self, ban_data: BanUserModel):
+        session: Session = next(generate_session())
+        ban_user_temporary(ban_data, session)
 
-class ModeratorState(UserState):
-    pass
+
+class ModeratorState(HelperState):
+
+    def ban_user(self, ban_data: BanUserModel):
+        pass
 
 
 class AdminState(UserState):

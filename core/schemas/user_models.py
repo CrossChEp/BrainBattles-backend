@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -45,3 +46,7 @@ class UserUpdateModel(BaseModel):
 class UserAbstractModel(UserUpdateModel):
     id: Optional[int]
 
+
+class BanUserModel(BaseModel):
+    id: int
+    term: datetime
