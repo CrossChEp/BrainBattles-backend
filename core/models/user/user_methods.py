@@ -76,7 +76,7 @@ def get_user(user: UserAbstractModel, session: Session):
     return user
 
 
-def update_user_data(user: UserTable, update_data: UserUpdateModel, session: Session):
+def update_user_data(user: UserTable, update_data, session: Session):
     """
     updates user in database
     :param user: User
