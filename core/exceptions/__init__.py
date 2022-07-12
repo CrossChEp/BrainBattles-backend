@@ -1,0 +1,1 @@
+from core.exceptions.exceptions_methods import throw_exception_if_user_have_no_rights
