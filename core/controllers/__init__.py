@@ -5,4 +5,4 @@ from core.controllers.admin_controllers.admin_tasks_controller import hide_task_
     add_task_to_public_controller
 
 from core.controllers.admin_controllers.admin_users_controller import ban_user_controller,\
-    edit_user_controller
+    edit_user_controller, delete_another_user_controller

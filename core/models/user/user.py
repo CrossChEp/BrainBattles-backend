@@ -61,6 +61,9 @@ class User:
                                  user_update_model: UserUpdateAdminModel):
         self.__state.edit_another_user(user_id, user_update_model)
 
+    def delete_another_user(self, user: UserTable):
+        self.__state.delete_another_user(user)
+
 
 class UserState:
 
@@ -115,6 +118,9 @@ class UserState:
 
     def edit_another_user(self, user_id: int,
                                  user_update_model: UserUpdateAdminModel) -> None:
+        raise NotImplementedError
+
+    def delete_another_user(self, user: UserTable):
         raise NotImplementedError
 
 
@@ -202,11 +208,14 @@ class AdminState(ModeratorState):
         edit_user(user, user_update_model, session)
 
 
-class ElderAdminState(UserState):
-    pass
+class ElderAdminState(AdminState):
+
+    def delete_another_user(self, user: UserTable):
+        session: Session = next(generate_session())
+        delete_user_from_database(user, session)
 
 
-class CEOState(UserState):
+class CEOState(ElderAdminState):
     pass
 
 
