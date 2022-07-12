@@ -5,4 +5,6 @@ from core.controllers.admin_controllers.admin_tasks_controller import hide_task_
     add_task_to_public_controller
 
 from core.controllers.admin_controllers.admin_users_controller import ban_user_controller,\
-    edit_user_controller, delete_another_user_controller
+    edit_user_controller, delete_another_user_controller, promote_user_to_ceo_controller,\
+    promote_user_to_default_controller, promote_user_to_elder_admin_controller, promote_user_to_helper_controller,\
+    promote_user_to_admin_controller, promote_user_to_moderator_controller

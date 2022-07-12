@@ -38,3 +38,5 @@ BANNED = 'banned'
 NOT_MODERATED = 'not_moderated'
 OPEN = 'open'
 HIDDEN = 'hidden'
+
+states = [DEFAULT, HELPER, MODERATOR, ADMIN, ELDER_ADMIN, CEO]
