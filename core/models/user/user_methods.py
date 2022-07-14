@@ -1,4 +1,4 @@
-"""Module for users' database methods"""
+"""Module for tasks' database methods"""
 
 from fastapi import Query
 from sqlalchemy.orm import Session
@@ -12,7 +12,7 @@ from core.models.general_methods import model_without_nones
 
 def users_get(session: Session):
     """
-    gets all users from database
+    gets all tasks from database
     :param session: Session
     :return: User
     """
@@ -76,7 +76,7 @@ def get_user(user: UserAbstractModel, session: Session):
     return user
 
 
-def update_user_data(user: UserTable, update_data: UserUpdateModel, session: Session):
+def update_user_data(user: UserTable, update_data, session: Session):
     """
     updates user in database
     :param user: User

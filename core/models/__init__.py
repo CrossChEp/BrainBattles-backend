@@ -5,19 +5,19 @@ Functions:
     task_add
         adds task to database
     tasks_get
-        gets all tasks
+        gets all users
     task_get
         gets task using it's id
     task_delete
         deletes task using it's id
     user_tasks_get
-        gets all tasks that user has ever created
+        gets all users that user has ever created
     get_user
         gets user using his id
     user_update
         updates user using his id
     users_get
-        gets all users
+        gets all tasks
     adding_to_staging
         adds user to queue
     delete_from_staging
@@ -33,7 +33,8 @@ Functions:
 """
 
 
-from core.models.tasks.tasks_methods import task_add, tasks_get, get_task_by_id, user_tasks_get, update_task_data
+from core.models.tasks.tasks_methods import task_add, tasks_get, get_task_by_id, user_tasks_get, update_task_data,\
+    get_all_tasks_from_database, get_concrete_task_with_every_state
 from core.models.auth.auth_methods import authenticate_user, create_access_token, get_password,\
     verify_password_hash
 from core.models.user.user import User, UserState
@@ -44,3 +45,5 @@ from core.models.game.game_methods import add_to_game, leave_game, make_try
 from core.models.game.game_auxiliary_methods import winner_check
 from core.models.images.image_methods import decode_image, encode_image
 from .general_methods import model_without_nones
+from core.models.admin.users.admin_users_methods import unban_user, ban_user_temporary,\
+    ban_user_permanently, promote_user

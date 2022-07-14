@@ -16,7 +16,7 @@ users_router = APIRouter()
 
 @users_router.get('/api/users')
 def get_all_users(user: UserTable = Depends(get_current_user)) -> List[UserGetModel]:
-    """ GET endpoint that gets all users from database
+    """ GET endpoint that gets all tasks from database
 
     :param session: Session
     :return: Json

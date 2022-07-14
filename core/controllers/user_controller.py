@@ -1,3 +1,4 @@
+from core.exceptions import throw_exception_if_user_have_no_rights
 from core.models import User
 from core.schemas import UserUpdateModel, UserAbstractModel, TaskAddModel, TaskUpdateModel
 from core.store import UserTable

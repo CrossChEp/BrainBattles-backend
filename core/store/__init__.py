@@ -2,9 +2,9 @@
 
     Classes:
         User
-            users' table
-        Task
             tasks' table
+        Task
+            users' table
         Staging
             queue's table
         Game

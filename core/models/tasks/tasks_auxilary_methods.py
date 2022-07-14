@@ -44,7 +44,7 @@ def is_task_exists(task: Query):
         (query of task)
     """
     if not task.one():
-        raise HTTPException(status_code=404, detail='No tasks were found')
+        raise HTTPException(status_code=404, detail='No users were found')
 
 
 def is_user_allowed_to_change_task(user: UserTable, task: Query):

@@ -16,7 +16,7 @@ from core.store import TaskTable, UserTable
 
 def get_random_task(tasks: list):
     """
-    gets random task regarding users' subject
+    gets random task regarding tasks' subject
     :param tasks: list
     :return: Task, bool
     """
@@ -41,6 +41,16 @@ def task_add(task: TaskAddModel, user: UserTable, session: Session):
         raise HTTPException(status_code=400, detail='Wrong rank')
 
     generate_new_task(task_model=task, session=session, user=user)
+
+
+def get_concrete_task_with_every_state(task_id: int, session: Session):
+    task = session.query(TaskTable).filter_by(id=task_id).first()
+    return task
+
+
+def get_all_tasks_from_database(session: Session):
+    tasks = session.query(TaskTable).all()
+    return tasks
 
 
 def tasks_get(session: Session):
@@ -83,14 +93,14 @@ def delete_user_task(task_id: int, user: UserTable, session: Session):
 
 
 def delete_task(task_id: int, session: Session) -> None:
-    task = get_task_by_id(task_id, session)
+    task = get_concrete_task_with_every_state(task_id, session)
     session.delete(task)
     session.commit()
 
 
 def user_tasks_get(user: UserTable):
     """
-    gets user's tasks
+    gets user's users
     :param user: User
     :param session: Session
     :return: Json

@@ -13,7 +13,7 @@ from core.middlewares.database_session import generate_session
 from core.schemas import Token, TokenData, UserGetModel
 from core.models import authenticate_user, get_user_by_id
 from core.store import UserTable
-from core.models.auth.auth_methods import create_access_token
+from core.models.auth.auth_methods import create_access_token, check_ban_data
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 
@@ -38,6 +38,7 @@ def get_current_user(session: Session = Depends(generate_session), token: str = 
     user = get_user_by_id(user_id=token_data.id, session=session)
     if user is None:
         raise credetials_exception
+    check_ban_data(user, session)
     return user
 
 
