@@ -1,13 +1,14 @@
 from datetime import datetime
 
 import pytest
+import sqlalchemy.orm.exc
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 from prompt_toolkit.key_binding.bindings.named_commands import edit_and_execute
 from sqlalchemy.orm import Session
 
 from core.configs import BANNED
-from core.controllers import ban_user_controller, edit_user_controller
+from core.controllers import ban_user_controller, edit_user_controller, delete_another_user_controller
 from core.middlewares.database_session import generate_session
 from core.models import get_user_by_id, delete_user_from_database
 from core.schemas import BanUserModel, UserUpdateAdminModel
@@ -68,3 +69,16 @@ def test_user_editing(give_admin_user):
     check_new_user_data(second_user)
     delete_user_from_database(first_user, session)
     delete_user_from_database(second_user, session)
+
+
+def test_all_users_deleting(give_elder_admin_user):
+    first_user = give_elder_admin_user[0]
+    second_user = give_elder_admin_user[1]
+    session: Session = next(generate_session())
+    first_user = get_user_by_id(first_user.id, session)
+    second_user = get_user_by_id(second_user.id, session)
+    delete_another_user_controller(second_user.id, first_user)
+    session.commit()
+    with pytest.raises(sqlalchemy.orm.exc.ObjectDeletedError):
+        second_user = get_user_by_id(second_user.id, session)
+    delete_user_from_database(first_user, session)
