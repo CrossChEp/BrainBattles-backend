@@ -1,6 +1,6 @@
 def filtered_users(subjects: list, queue: list):
     """
-    filters users in queue regarding user's subject
+    filters tasks in queue regarding user's subject
     :param subjects: list
     :param queue: List[QueueModel]
     :return: list

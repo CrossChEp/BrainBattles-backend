@@ -16,7 +16,7 @@ def add_ranks_list(ranks: dict) -> list:
 
 def filter_by_rank(users: list, active_user: UserTable):
     """
-    filters users in queue regarding user's rank
+    filters tasks in queue regarding user's rank
     :param users: list
     :param active_user: User
     :return: list

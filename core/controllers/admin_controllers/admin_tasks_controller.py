@@ -1,5 +1,6 @@
 from core.exceptions import throw_exception_if_user_have_no_rights
-from core.models import User
+from core.middlewares.database_session import generate_session
+from core.models import User, get_user_by_id
 from core.store import UserTable
 
 

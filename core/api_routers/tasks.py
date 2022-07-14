@@ -27,7 +27,7 @@ def add_task(task: TaskAddModel, user: UserTable = Depends(get_current_user)):
 
 @tasks_router.get('/api/tasks')
 def get_tasks(session: Session = Depends(generate_session)):
-    """ GET endpoint that gets all tasks from database
+    """ GET endpoint that gets all users from database
 
     :param session: Session
     :return: Json
@@ -65,7 +65,7 @@ def delete_task(task_id: int, user: UserTable = Depends(get_current_user),
 
 @tasks_router.get('/api/user_tasks')
 def get_user_tasks(user: UserTable = Depends(get_current_user)):
-    """ GET endpoint that gets user's tasks
+    """ GET endpoint that gets user's users
 
     :param user: User
     :param session: Session

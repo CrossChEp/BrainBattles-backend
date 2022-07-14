@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
+from core.api_routers.tasks import add_task
 from core.configs import ADMIN
 from core.configs.config import OPEN
 from core.middlewares.database_session import generate_session
@@ -38,11 +39,21 @@ def add_task_to_public(task: TaskTable, session: Session):
 
 
 @pytest.fixture
-def give_test_user_account():
+def give_test_user_account_with_open_task():
     session: Session = next(generate_session())
     add_user_to_database(UserRegisterModel(**test_user_data), session)
     test_user: UserTable = get_user(UserAbstractModel(nickname=test_user_data['nickname']), session)
     promote_test_user_to_admin(test_user, session)
     task_add(TaskAddModel(**test_task_data), test_user, session)
     add_task_to_public(test_user.tasks[0], session)
+    yield test_user
+
+
+@pytest.fixture
+def give_test_user_account_with_task():
+    session: Session = next(generate_session())
+    add_user_to_database(UserRegisterModel(**test_user_data), session)
+    test_user: UserTable = get_user(UserAbstractModel(nickname=test_user_data['nickname']), session)
+    promote_test_user_to_admin(test_user, session)
+    task_add(TaskAddModel(**test_task_data), test_user, session)
     yield test_user

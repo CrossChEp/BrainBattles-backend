@@ -6,7 +6,7 @@ from core.store import UserTable, TaskTable
 
 
 def filter_task_by_rank(user: UserTable, subject: str, session: Session):
-    """ filters all tasks by user's rank
+    """ filters all users by user's rank
 
     :param user: User
     :param subject: str

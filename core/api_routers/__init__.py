@@ -6,7 +6,7 @@
         auth_router
             router for auth endpoints
         tasks_router
-            router for tasks endpoints
+            router for users endpoints
         matchmaking_router
             router for matchmaking
         game_router

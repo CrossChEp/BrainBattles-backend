@@ -5,7 +5,7 @@ app = Celery(
     'celery',
     broker='redis://localhost:6379/0',
     backend='redis://localhost:6379/0',
-    include=['celery.tasks']
+    include=['celery.users']
 )
 app.conf.update(
     task_serializer='json',
