@@ -23,6 +23,18 @@ test_second_user_data = {
     'password': 'testUser2',
 }
 
+new_user_data = {
+    'nickname': 'testNewUser',
+    'email': 'test_new_user@gmail.com',
+    'name': 'testNewUser',
+    'surname': 'testNewUser',
+    'password': 'testNewUser',
+    'rank': '5',
+    'wins': 10,
+    'scores': 13,
+    'games': 30
+}
+
 
 @pytest.fixture
 def give_moderator_user():
