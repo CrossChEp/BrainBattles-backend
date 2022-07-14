@@ -28,8 +28,9 @@ test_task_data = {
 }
 
 
-def promote_test_user_to_admin(user: UserTable, session: Session):
-    user.state = ADMIN
+def promote_test_user_to_another_state(user: UserTable, state: str,
+                                       session: Session):
+    user.state = state
     session.commit()
 
 
@@ -43,7 +44,7 @@ def give_test_user_account_with_open_task():
     session: Session = next(generate_session())
     add_user_to_database(UserRegisterModel(**test_user_data), session)
     test_user: UserTable = get_user(UserAbstractModel(nickname=test_user_data['nickname']), session)
-    promote_test_user_to_admin(test_user, session)
+    promote_test_user_to_another_state(test_user, state=ADMIN, session=session)
     task_add(TaskAddModel(**test_task_data), test_user, session)
     add_task_to_public(test_user.tasks[0], session)
     yield test_user
@@ -54,6 +55,6 @@ def give_test_user_account_with_task():
     session: Session = next(generate_session())
     add_user_to_database(UserRegisterModel(**test_user_data), session)
     test_user: UserTable = get_user(UserAbstractModel(nickname=test_user_data['nickname']), session)
-    promote_test_user_to_admin(test_user, session)
+    promote_test_user_to_another_state(test_user, state=ADMIN, session=session)
     task_add(TaskAddModel(**test_task_data), test_user, session)
     yield test_user
