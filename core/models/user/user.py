@@ -1,3 +1,25 @@
+"""
+This module contains User state patter, that allows to make all the actions
+with users
+
+Classes:
+    User
+    UserState
+    DefaultState
+    HelperState
+    ModeratorState
+    AdminState
+    ElderAdminState
+    CeoState
+    BannedState
+
+    Functions:
+        convert_string_state_to_class
+            converts state string format to class
+
+"""
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from core.configs import DEFAULT, HELPER, MODERATOR, ADMIN, ELDER_ADMIN, CEO
@@ -9,11 +31,18 @@ from core.models.admin.users.admin_users_methods import ban_user_temporary, ban_
 from core.models.tasks.tasks_methods import delete_user_task
 from core.models.user.user_methods import update_user_data, delete_user_from_database, get_user_by_id, get_user, users_get
 from core.schemas import UserAbstractModel, UserUpdateModel, TaskAddModel, TaskUpdateModel, BanUserModel, \
-    UserUpdateAdminModel
+    UserUpdateAdminModel, UserGetModel, TaskGetModel
 from core.store import UserTable
 
 
 class User:
+    """ Class that contains all user methods
+        fields:
+        __user: UserTable
+            user's database object
+        __state: UserState
+            user's state in class format
+    """
 
     def __init__(self, user: UserTable):
         self.__user: UserTable = user
@@ -23,142 +52,384 @@ class User:
             user_database=self.__user
         )
 
-    def delete(self):
+    def delete(self) -> None:
+        """deletes this user
+        :return: None
+        """
         self.__state.delete()
 
-    def update(self, user_update_data: UserUpdateModel):
+    def update(self, user_update_data: UserUpdateModel) -> None:
+        """updates this user data
+
+        :return: None
+        """
         self.__state.update(user_update_data)
 
-    def get_users(self):
+    def get_users(self) -> List[UserGetModel]:
+        """gets all users from database
+
+        :return: List[UserGetModel]
+        """
         return self.__state.get_users()
 
-    def get_user(self, user: UserAbstractModel):
+    def get_user(self, user: UserAbstractModel) -> UserGetModel:
+        """gets concrete user
+
+        :param user: UserAbstractModel
+            (Model fields for which the search will be performed)
+        :return: UserGetModel
+        """
         return self.__state.get_concrete_user(user)
 
-    def add_task(self, task: TaskAddModel):
+    def add_task(self, task: TaskAddModel) -> None:
+        """adds task to database
+
+        :param task: TaskAddModel
+            (Model that contains fields that will have future task)
+        :return None
+        """
         self.__state.add_task(task)
 
-    def get_my_tasks(self):
+    def get_my_tasks(self) -> List[TaskGetModel]:
+        """gets all user's tasks
+
+        :return: List[TaskGetModel]
+        """
         return self.__state.get_my_tasks()
 
-    def update_my_task_data(self, task_id: int, task_model: TaskUpdateModel):
+    def update_my_task_data(self, task_id: int, task_model: TaskUpdateModel) -> None:
+        """updates user's task
+
+        :param task_id: int
+            (id of task that will be updated)
+        :param task_model: TaskUpdateModel
+            (Model that contains new task data)
+        :return: None
+        """
         self.__state.update_my_task_data(task_id, task_model)
 
-    def delete_my_task(self, task_id: int):
+    def delete_my_task(self, task_id: int) -> None:
+        """deletes user's task
+
+        :param task_id: int
+            (id of task that will be deleted)
+        :return: None
+        """
         self.__state.delete_my_task(task_id)
 
-    def get_task_using_id(self, task_id: int):
+    def get_task_using_id(self, task_id: int) -> TaskGetModel:
+        """gets task using id
+
+        :param task_id: int
+            (id of task that will be returned)
+        :return: TaskGetModel
+        """
         return self.__state.get_task_using_id(task_id)
 
-    def add_task_to_public(self, task_id: int):
+    def add_task_to_public(self, task_id: int) -> None:
+        """adds task to open access
+
+        :param task_id: int
+            (id of task that will be added to open access)
+        :return: None
+        """
         self.__state.add_task_to_public(task_id)
 
-    def hide_task(self, task_id: int):
+    def hide_task(self, task_id: int) -> None:
+        """hides task from open access
+
+        :param task_id: int
+        :return: None
+        """
         self.__state.hide_task(task_id)
 
-    def ban_user(self, ban_data: BanUserModel):
+    def ban_user(self, ban_data: BanUserModel) -> None:
+        """bans user
+
+        :param ban_data: BanUserModel
+        :return: None
+        """
         self.__state.ban_user(ban_data)
 
     def edit_another_user(self, user_id: int,
-                                 user_update_model: UserUpdateAdminModel):
+                                 user_update_model: UserUpdateAdminModel) -> None:
+        """edits another user using his id
+
+        :param user_id: int
+            (id of user that should be edited)
+        :param user_update_model: UserUpdateAdminModel
+            (new user's data)
+        :return: None
+        """
         self.__state.edit_another_user(user_id, user_update_model)
 
-    def delete_another_user(self, user: UserTable):
+    def delete_another_user(self, user: UserTable) -> None:
+        """deletes another user
+
+        :param user: UserTable
+            (user that should be deleted)
+        :return: None
+        """
         self.__state.delete_another_user(user)
 
+    def promote_to_default(self, user: UserTable) -> None:
+        """promotes user's state to default
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
+        self.__state.promote_to_default(user)
+
     def promote_to_helper(self, user: UserTable):
+        """promotes user's state to helper
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         self.__state.promote_to_helper(user)
 
     def promote_to_moderator(self, user: UserTable):
+        """promotes user's state to moderator
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         self.__state.promote_to_moderator(user)
 
     def promote_to_admin(self, user: UserTable):
+        """promotes user's state to admin
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         self.__state.promote_to_admin(user)
 
     def promote_to_elder_admin(self, user: UserTable):
+        """promotes user's state to elder admin
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         self.__state.promote_to_elder_admin(user)
 
     def promote_to_ceo(self, user: UserTable):
-        self.__state.promote_to_ceo(user)
+        """promotes user's state to ceo
 
-    def promote_to_default(self, user: UserTable):
-        self.__state.promote_to_default(user)
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
+        self.__state.promote_to_ceo(user)
 
 
 class UserState:
+    """ allows managing user in dependence of his state
 
+    fields
+    __user
+        user's object of User class
+    __user_database
+        user's database object
+    """
     def __init__(self, user: User, user_database: UserTable):
         self.__user = user
         self.__user_database = user_database
 
-    def get_user_database(self):
+    def get_user_database(self) -> UserTable:
+        """gets user's database object
+
+        :return: UserTable
+        """
         return self.__user_database
 
-    def get_user(self):
+    def get_user(self) -> User:
+        """gets user's class object
+
+        :return: User
+        """
         return self.__user
 
-    def delete(self):
+    def delete(self) -> None:
+        """deletes this user
+
+        :return: None
+        """
         raise NotImplementedError
 
-    def update(self, user_update_data: UserUpdateModel):
+    def update(self, user_update_data: UserUpdateModel) -> None:
+        """updates this user data
+
+        :return: None
+        """
         raise NotImplementedError
 
     def show_data(self):
         raise NotImplementedError
 
-    def get_users(self):
+    def get_users(self) -> List[UserGetModel]:
+        """gets all users from database
+
+        :return: List[UserGetModel]
+        """
         raise NotImplementedError
 
-    def get_concrete_user(self, user: UserAbstractModel):
+    def get_concrete_user(self, user: UserAbstractModel) -> UserGetModel:
+        """gets concrete user
+
+        :param user: UserAbstractModel
+            (Model fields for which the search will be performed)
+        :return: UserGetModel
+        """
         raise NotImplementedError
 
-    def add_task(self, task: TaskAddModel):
+    def add_task(self, task: TaskAddModel) -> None:
+        """adds task to database
+
+        :param task: TaskAddModel
+            (Model that contains fields that will have future task)
+        :return None
+        """
         raise NotImplementedError
 
-    def get_my_tasks(self):
+    def get_my_tasks(self) -> TaskGetModel:
+        """gets all user's tasks
+
+        :return: List[TaskGetModel]
+        """
         raise NotImplementedError
 
-    def update_my_task_data(self, task_id: int, task_model: TaskUpdateModel):
+    def update_my_task_data(self, task_id: int, task_model: TaskUpdateModel) -> None:
+        """updates user's task
+
+        :param task_id: int
+            (id of task that will be updated)
+        :param task_model: TaskUpdateModel
+            (Model that contains new task data)
+        :return: None
+        """
         raise NotImplementedError
 
-    def delete_my_task(self, task_id: int):
+    def delete_my_task(self, task_id: int) -> None:
+        """deletes user's task
+
+        :param task_id: int
+            (id of task that will be deleted)
+        :return: None
+        """
         raise NotImplementedError
 
-    def get_task_using_id(self, task_id: int):
+    def get_task_using_id(self, task_id: int) -> TaskGetModel:
+        """gets task using id
+
+        :param task_id: int
+            (id of task that will be returned)
+        :return: TaskGetModel
+        """
         raise NotImplementedError
 
-    def add_task_to_public(self, task_id: int):
+    def add_task_to_public(self, task_id: int) -> None:
+        """adds task to open access
+
+        :param task_id: int
+            (id of task that will be added to open access)
+        :return: None
+        """
         raise NotImplementedError
 
-    def hide_task(self, task_id: int):
+    def hide_task(self, task_id: int) -> None:
+        """hides task from open access
+
+        :param task_id: int
+        :return: None
+        """
         raise NotImplementedError
 
-    def ban_user(self, ban_data: BanUserModel):
+    def ban_user(self, ban_data: BanUserModel) -> None:
+        """bans user
+
+        :param ban_data: BanUserModel
+        :return: None
+        """
         raise NotImplementedError
 
     def edit_another_user(self, user_id: int,
                                  user_update_model: UserUpdateAdminModel) -> None:
+        """edits another user using his id
+
+        :param user_id: int
+            (id of user that should be edited)
+        :param user_update_model: UserUpdateAdminModel
+            (new user's data)
+        :return: None
+        """
         raise NotImplementedError
 
-    def delete_another_user(self, user: UserTable):
+    def delete_another_user(self, user: UserTable) -> None:
+        """deletes another user
+
+        :param user: UserTable
+            (user that should be deleted)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_helper(self, user: UserTable):
+    def promote_to_helper(self, user: UserTable) -> None:
+        """promotes user's state to helper
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_moderator(self, user: UserTable):
+    def promote_to_moderator(self, user: UserTable) -> None:
+        """promotes user's state to moderator
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_admin(self, user: UserTable):
+    def promote_to_admin(self, user: UserTable) -> None:
+        """promotes user's state to admin
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_elder_admin(self, user: UserTable):
+    def promote_to_elder_admin(self, user: UserTable) -> None:
+        """promotes user's state to admin
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_ceo(self, user: UserTable):
+    def promote_to_ceo(self, user: UserTable) -> None:
+        """promotes user's state to ceo
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
-    def promote_to_default(self, user: UserTable):
+    def promote_to_default(self, user: UserTable) -> None:
+        """promotes user's state to default
+
+        :param user: UserTable
+            (user whose state should be changed)
+        :return: None
+        """
         raise NotImplementedError
 
 
@@ -169,7 +440,7 @@ class DefaultState(UserState):
         user = self.get_user_database()
         update_user_data(user, user_update_data, session)
 
-    def delete(self):
+    def delete(self) -> None:
         session: Session = next(generate_session())
         user = self.get_user_database()
         delete_user_from_database(user, session)
