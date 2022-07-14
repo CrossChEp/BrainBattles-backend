@@ -27,3 +27,17 @@ def test_temporary_ban(give_moderator_user):
     assert second_user.ban_term == ban_date
     delete_user_from_database(first_user, session)
     delete_user_from_database(second_user, session)
+
+
+def test_permanent_ban(give_admin_user):
+    first_user = give_admin_user[0]
+    second_user = give_admin_user[1]
+    session: Session = next(generate_session())
+    first_user = get_user_by_id(first_user.id, session)
+    second_user = get_user_by_id(second_user.id, session)
+    ban_user_controller(BanUserModel(id=second_user.id), first_user)
+    session.commit()
+    assert second_user.state == BANNED
+    assert second_user.ban_term
+    delete_user_from_database(first_user, session)
+    delete_user_from_database(second_user, session)
