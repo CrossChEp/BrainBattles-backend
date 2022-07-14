@@ -54,9 +54,10 @@ def promote_user(promotion_method, user_id: int,
     throw_exception_if_user_have_no_rights(promotion_method, user_we_want_to_promote)
 
 
-def promote_user_to_anther_state(user: UserTable, promoter: UserTable,
-                                 state: str, session: Session):
+def promote_user_to_another_state(user: UserTable, promoter: UserTable,
+                                  state: str, session: Session):
     promoter = get_user_by_id(promoter.id, session)
     throw_exception_if_user_have_lesser_state(promoter, user)
     user.state = state
     session.commit()
+    print(user.state)
