@@ -41,7 +41,7 @@ from core.models.user.user import User, UserState
 from core.models.user.user_methods import get_user, update_user_data, add_user_to_database, delete_user_from_database, users_get,\
     get_user_by_id
 from core.models.matchmaking.matchmaking_methods import adding_to_staging, delete_from_staging
-from core.models.game.game_methods import add_to_game, leave_game, make_try
+from core.models.game.game_methods import add_to_game, leave_game, make_try, connect_to_game
 from core.models.game.game_auxiliary_methods import winner_check
 from core.models.images.image_methods import decode_image, encode_image
 from .general_methods import model_without_nones
