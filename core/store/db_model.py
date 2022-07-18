@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, JSON, DATETIME
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, JSON, DATETIME, Date
 from sqlalchemy.orm import declarative_base, relationship
 
 base = declarative_base()
@@ -20,7 +20,7 @@ class UserTable(base):
     wins = Column(Integer)
     games = Column(Integer)
     state = Column(String)
-    ban_term = Column(DATETIME)
+    ban_term = Column(Date)
     tasks = relationship('TaskTable', backref='user')
 
 
