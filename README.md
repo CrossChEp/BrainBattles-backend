@@ -16,3 +16,6 @@ Api contains some endpoints:
 - Queue endpoints
 - Tasks endpoints
 - Auth endpoint
+
+### BrainBattles matchmacking server(indev): https://github.com/CrossChEp/brainbattles-matchmaking-server
+### BrainBattles game server(indev): https://github.com/CrossChEp/brainbattles-game-server/settings
