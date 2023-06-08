@@ -13,8 +13,8 @@ for BrainBattles app
 # Project description
 ## The goal of the project
 The goal of the project is to develop a system for competition between students.
-Users can choose an subject, enter the game filtered
-by their rank and subject. With the correct answer to the task, the user gets
+Users can choose the subject, enter the game filtered
+by their rank and subject. With the correct answer to the task, user gets
 points, with which he gets himself a new rank. The higher the rank, the more privileges.
 For example, users with an average rank get the opportunity to add, update and delete
 THEIR tasks according to the rank.
