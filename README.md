@@ -7,6 +7,9 @@ VBeta 1.0
 The api allows you to make requests to get some data 
 for BrainBattles app
 
+### BrainBattles matchmacking server(indev): https://github.com/CrossChEp/brainbattles-matchmaking-server
+### BrainBattles game server(indev): https://github.com/CrossChEp/brainbattles-game-server/settings
+
 # Quickstart
 ### 1.Clone the repo  "BrainBattles backend"
 ### 2. Create a new virtual environment 
@@ -31,6 +34,4 @@ for BrainBattles app
 ### 7. Run the api
 #### ```uvicorn run api:app```
 ## Now everything is working!
-
-
 
