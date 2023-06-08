@@ -1,1 +1,0 @@
-from middlewares.redis_sessions import get_redis_table
