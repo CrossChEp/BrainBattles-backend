@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-database_protocol = 'sqlite:///core/store/database.db'
-engine = create_engine(database_protocol, connect_args={'check_same_thread': False})
+database_protocol = 'postgresql://postgres:4122@localhost:5432/brainbattles'
+engine = create_engine(database_protocol)
 session = sessionmaker(bind=engine)
 
 
